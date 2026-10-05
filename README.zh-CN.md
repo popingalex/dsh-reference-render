@@ -17,7 +17,7 @@
 
 面向 [DeepSeek Harness（DSH）](https://github.com/deepseek-ai/deepseek-harness)对话与面板的**域中立结构化引用渲染与交互原语**。
 
-> 零核心改动，纯插件挂载。装上即用，卸了不留核心补丁。引用打开走 DSH 官方右侧栏：内容方调用 `sidebarRight.openResource`，并注册原生 tab。本包不自绘右列。
+> 不改宿主，纯插件挂载，卸载后宿主保持原样。引用打开走 DSH 官方右侧栏：内容方调用 `sidebarRight.openResource`，并注册原生 tab。本包不自绘右列。
 
 把结构化文本中的引用变成显著的内联 chip，支持悬浮预览、激活路由，以及让**其他插件**供给领域内容的贡献契约——而本包自身**不理解任何业务领域**。
 
@@ -55,14 +55,14 @@ DSH 对话承载结构化引用（事务、报告、部署、知识……）。�
 
 前置：`dsh web` 能正常打开，Node.js `^22.19` 或 `>=24`，pnpm 10+。命令里的 `web` 换成你自己的 profile 名即可。
 
-本包只在 **DSH 0.2.1-alpha.1** 上测过。`engines.dsh` 写成这个精确版本。写 `@latest` 或 caret 范围会在以后的版本线上装到未测过的包；这个宿主目前不根据 `engines.dsh` 拒绝安装，范围写错也不会在启动时被拦下来。
+本包只在 **DSH 0.2.1-alpha.1** 上测过。`engines.dsh` 写成这个精确版本。写 `@latest` 或 caret 范围会在以后的版本线上装到未测过的包。安装期的兼容性拦截看 `peerDependencies` 里的 `@deepseek-ai/dsh*` 条目——这里是 `@deepseek-ai/dsh-client-ui-slots`——版本不符会在 `dsh plugin add` 阶段被拦下并给出精确版本提示；`engines.dsh` 只是声明。
 
 | 你的 DSH | 安装 |
 |---|---|
 | **0.2.1-alpha.1** | `dsh plugin --profile web add dsh-reference-render@0.1.0` |
 | 其他版本 | 没有可装版本。先把 DSH 换到 0.2.1-alpha.1 |
 
-发布到注册表之后用上表那一行。当前已测通的是 tarball：
+源码树构建出的产物按 tarball 安装：
 
 ```bash
 dsh --profile web --from-default-profile web

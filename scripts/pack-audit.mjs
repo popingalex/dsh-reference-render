@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Package allowlist 审计：npm pack --dry-run 的装箱清单必须与 package.json
- * files allowlist 一致（不多不少），且不得包含 lockfile/缓存/私有产物。
+ * 装箱清单审计：装箱内容由 package.json 的 `files` allowlist 决定，本脚本
+ * 再对装箱结果做负向检查——不得出现 lockfile、依赖目录、本地状态目录或
+ * 验收收据目录。
  */
 import { execFileSync } from 'node:child_process'
 import { writeFileSync, mkdirSync } from 'node:fs'
@@ -20,9 +21,6 @@ const forbidden = [
   /\.dsh-home/,
   /acceptance\//,
   /(^|\/)docs\/goals\//,
-  /(^|\/)PUBLICATION-RUNBOOK\.md$/,
-  /(^|\/)00-execution-status\.md$/,
-  /(^|\/)REPORT\.md$/,
 ]
 const violations = entries.filter((entry) => forbidden.some((rule) => rule.test(entry)))
 

@@ -6,13 +6,13 @@
 
 | 项 | 值 |
 |---|---|
-| DSH runtime | **0.2.1-alpha.1**（engines.dsh 精确 gate；vendor cordis 为 alpha 渠道 4.0.5-alpha.1） |
+| DSH runtime | **0.2.1-alpha.1**（安装期拦截靠 peer `@deepseek-ai/dsh-client-ui-slots` 的精确区间；cordis 走 alpha 渠道 4.0.5-alpha.1） |
 | Node | `^22.19.0 || >=24.0.0`（实测 v22.20.0） |
 | package manager | pnpm 10.15.0（DSH 根声明 11.7.0——profile 内安装走 `dsh plugin add` 语义，与全局 pnpm 版本解耦） |
 | profile | web（官方模板 `@deepseek-ai/dsh-base` + web app-bundle） |
 | React | >=18（peer） |
 | @deepseek-ai/cordis | >=4.0.0（peer，optional——纯 type-only 依赖） |
-| manifest | `dsh.manifestVersion: 1`。当前安装器与加载器不根据该字段或 `engines.dsh` 拒绝安装；版本表仍以实测行为准 |
+| manifest | `dsh.manifestVersion: 1`，安装器与加载器不按该字段拒绝安装。拒绝安装靠 `peerDependencies` 里的 `@deepseek-ai/dsh*` 区间；`engines.dsh` 是声明字段。版本表仍以实测行为准 |
 
 ## Install paths（tested）
 

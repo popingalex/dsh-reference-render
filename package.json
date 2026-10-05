@@ -67,10 +67,12 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests scripts examples --max-warnings 0",
     "verify": "node scripts/verify.mjs",
+    "sanitize:release": "node scripts/sanitize-scan.mjs --release",
     "pack:audit": "npm pack --dry-run"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": ">=4.0.0",
+    "@deepseek-ai/dsh-client-ui-slots": "0.2.1-alpha.1",
     "react": ">=18"
   },
   "peerDependenciesMeta": {

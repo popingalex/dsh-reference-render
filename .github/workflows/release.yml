@@ -1,0 +1,58 @@
+name: Release
+
+# Publishing is a deliberate act: a GitHub Release (created from an approved
+# tag `vX.Y.Z` that matches `version` in package.json) is what publishes to npm.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-release-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Verify and publish to npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - name: Require the tag to name the packaged version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          version="$(node --print "require('./package.json').version")"
+          if [ "$RELEASE_TAG" != "v$version" ]; then
+            echo "Release tag $RELEASE_TAG does not match package version v$version" >&2
+            exit 1
+          fi
+
+      - run: pnpm install --frozen-lockfile
+
+      # The same gate CI enforces on every push, plus the commit-metadata pass:
+      # whose name and which internal working documents a commit reveals is a
+      # publication decision, so it is checked where publication happens.
+      - run: pnpm verify
+      - run: pnpm sanitize:release
+
+      - name: Publish the packed tarball
+        run: |
+          tarball="$(npm pack --ignore-scripts | tail -1)"
+          npm publish "$tarball" --access public --provenance --ignore-scripts

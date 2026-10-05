@@ -17,7 +17,7 @@
 
 Domain-neutral **structured reference rendering & interaction primitives** for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) conversations and panels.
 
-> Zero core edits. The plugin mounts as a bundle and leaves no core patch when removed. Opening a reference uses the host right sidebar: a content plugin calls `sidebarRight.openResource` and registers a native tab. This package does not draw its own column.
+> No host edits. The plugin mounts as a bundle, and removing it leaves the host unchanged. Opening a reference uses the host right sidebar: a content plugin calls `sidebarRight.openResource` and registers a native tab. This package does not draw its own column.
 
 Turn structured text references into prominent inline chips, with hover previews, activation routing, and a contribution contract that lets **other plugins** supply domain content — while this package understands **no business domain at all**.
 
@@ -55,14 +55,14 @@ DSH conversations carry structured references (issues, reports, deployments, kno
 
 Requires a working `dsh web`, Node.js `^22.19` or `>=24`, and pnpm 10+. Replace `web` with your profile name.
 
-This package is tested only on **DSH 0.2.1-alpha.1**. `engines.dsh` is that exact version. `@latest` and a caret range will track later releases that this package has not been tested with. The current host does not reject an install from `engines.dsh`; a wrong range is not caught at boot.
+This package is tested only on **DSH 0.2.1-alpha.1**. `engines.dsh` is that exact version. `@latest` and a caret range will track later releases that this package has not been tested with. The host's install-time compatibility check reads the `@deepseek-ai/dsh*` entries in `peerDependencies` — here `@deepseek-ai/dsh-client-ui-slots` — and rejects an install whose runtime version does not satisfy them. `engines.dsh` itself is declarative.
 
 | Your DSH | Install |
 |---|---|
 | **0.2.1-alpha.1** | `dsh plugin --profile web add dsh-reference-render@0.1.0` |
 | anything else | No supported release. Move DSH to 0.2.1-alpha.1 first |
 
-Use the row above after the package is on a registry. The path exercised locally is a tarball:
+A build from this source tree installs from its tarball:
 
 ```bash
 dsh --profile web --from-default-profile web
