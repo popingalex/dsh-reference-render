@@ -113,3 +113,19 @@ describe('StatusRefChip decorations 换算与叠加', () => {
     }
   })
 })
+
+describe('styles injection idempotency', () => {
+  it('ensureReferenceStyles injects once and is safe to call repeatedly', async () => {
+    const { ensureReferenceStyles, REFERENCE_STYLE_ID } = await import('../src/styles')
+    document.getElementById(REFERENCE_STYLE_ID)?.remove()
+    const before = document.querySelectorAll('style').length
+    ensureReferenceStyles(document)
+    const style = document.getElementById(REFERENCE_STYLE_ID)
+    expect(style).not.toBeNull()
+    ensureReferenceStyles(document)
+    ensureReferenceStyles(document)
+    expect(document.getElementById(REFERENCE_STYLE_ID)).toBe(style)
+    expect(document.querySelectorAll('style').length).toBe(before + 1)
+    expect(style?.textContent).toContain('.dsh-ref-chip')
+  })
+})

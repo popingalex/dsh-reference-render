@@ -13,6 +13,7 @@
 | React | >=18（peer） |
 | @deepseek-ai/cordis | >=4.0.0（peer，optional——纯 type-only 依赖） |
 | manifest | `dsh.manifestVersion: 1`，安装器与加载器不按该字段拒绝安装。拒绝安装靠 `peerDependencies` 里的 `@deepseek-ai/dsh*` 区间；`engines.dsh` 是声明字段。版本表仍以实测行为准 |
+| companion demo bundles | `dsh-reference-render-demo@0.2.5`（渲染接线）与 `dsh-reference-render-sidebar-demo@0.1.6`（内容认领方）——同 profile 安装才能复现 README 全部效果；版本与本表同步测试 |
 
 ## Install paths（tested）
 
