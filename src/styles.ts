@@ -27,16 +27,16 @@ export const REFERENCE_STYLES = `
 }
 .dsh-ref-chip:hover { background: rgba(128, 128, 128, .16); }
 .dsh-ref-chip:disabled { cursor: default; opacity: .7; }
-.dsh-ref-chip[data-ref-chip-kind] { }
 .dsh-ref-chip [data-ref-chip-kind] {
   opacity: .65;
   margin-right: 4px;
   font-size: .9em;
 }
 .dsh-ref-hover-panel {
-  background: var(--dsh-ref-panel-bg, #1f1f22);
-  color: var(--dsh-ref-panel-fg, #f0f0f2);
-  border: 1px solid rgba(128, 128, 128, .3);
+  /* 跟随系统/文档配色（亮暗主题自适应）；宿主可用 --dsh-ref-panel-* 覆盖 */
+  background: var(--dsh-ref-panel-bg, Canvas);
+  color: var(--dsh-ref-panel-fg, CanvasText);
+  border: 1px solid color-mix(in srgb, CanvasText 30%, transparent);
   border-radius: 8px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, .25);
   padding: 8px 10px;

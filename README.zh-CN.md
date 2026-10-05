@@ -69,7 +69,7 @@ ctx.on('reference/open', ({ descriptor }) =>
 
 ## 示例与本地演示
 
-可运行示例在仓库中：[`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo)（对话渲染接线）与 [`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo)（内容认领方），以 `dsh-reference-render-demo` 与 `dsh-reference-render-sidebar-demo` bundle 安装。
+可运行示例在仓库中：[`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo)（对话渲染接线）与 [`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo)（内容认领方），以 `dsh-reference-render-demo` 与 `dsh-reference-render-sidebar-demo` bundle 安装。纯源码走读：[`examples/minimal`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/minimal)（输出 → 解析 → chip，零领域）与 [`examples/contribution`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/contribution)（多插件围绕同一协议协作）——均在仓库测试套件中运行。
 
 本地复现 README 截图：[docs/local-demo.md](./docs/local-demo.md)。
 

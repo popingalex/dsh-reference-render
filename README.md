@@ -69,7 +69,7 @@ Full contribution shapes (chip decorations, resource tab, activation payload): [
 
 ## Examples & local demo
 
-Runnable examples live in the repository: [`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo) (conversation wiring) and [`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo) (content claimant), installed as the `dsh-reference-render-demo` and `dsh-reference-render-sidebar-demo` bundles.
+Runnable examples live in the repository: [`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo) (conversation wiring) and [`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo) (content claimant), installed as the `dsh-reference-render-demo` and `dsh-reference-render-sidebar-demo` bundles. Pure source walkthroughs: [`examples/minimal`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/minimal) (emit → parse → chip, no domain) and [`examples/contribution`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/contribution) (multi-plugin cooperation around one protocol) — both run in this repo's test suite.
 
 To reproduce the README screenshots on your machine: [docs/local-demo.md](./docs/local-demo.md).
 
