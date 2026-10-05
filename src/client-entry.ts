@@ -7,6 +7,8 @@ import { ensureReferenceStyles } from './styles'
 
 export * from './index'
 
+export const name = 'dsh-reference-render'
+
 export const inject: string[] = []
 
 export function apply(): void {

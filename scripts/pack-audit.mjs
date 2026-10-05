@@ -10,7 +10,8 @@ import { fileURLToPath } from 'node:url'
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const dryRun = execFileSync('npm', ['pack', '--dry-run', '--json'], { cwd: root, encoding: 'utf8' })
-const packed = JSON.parse(dryRun)
+const jsonStart = dryRun.indexOf('[')
+const packed = JSON.parse(jsonStart >= 0 ? dryRun.slice(jsonStart) : dryRun)
 const entries = (packed[0]?.files ?? []).map((file) => file.path).sort()
 const forbidden = [/(^|\/)node_modules\//, /pnpm-lock\.yaml$/, /package-lock\.json$/, /\.dsh-home/, /acceptance\//]
 const violations = entries.filter((entry) => forbidden.some((rule) => rule.test(entry)))

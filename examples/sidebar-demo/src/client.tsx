@@ -1,7 +1,7 @@
 /**
- * dsh-reference-sidebar-demo — 内容贡献方示例插件（dsh-reference 官方示例）。
+ * dsh-reference-render-sidebar-demo — 内容贡献方示例插件（dsh-reference-render 官方示例）。
  *
- * 与 dsh-reference-demo（渲染接线）演示多插件协作：本插件不理解渲染接线，
+ * 与 dsh-reference-render-demo（渲染接线）演示多插件协作：本插件不理解渲染接线，
  * 只围绕 domain-neutral 引用契约贡献内容——
  *  1. 资源详情页：三个协议的 ResourceProvider（帧流）+ 资源 tab 定义 +
  *     useResource body/title；reference/open 接管 → ctx.sidebarRight.openResource。
@@ -9,7 +9,7 @@
  *     （select 认领 demo 域地址；渲染接线插件负责消费选举）。
  *
  * demo 域假数据（真插件里这里来自各自 canonical 服务）。
- * 构建期相对打包 dsh-reference 源码；生产宿主应改为正常 npm 依赖。
+ * 构建期相对打包 dsh-reference-render 源码；生产宿主应改为正常 npm 依赖。
  */
 import { createElement } from 'react'
 import { referenceHandled } from '../../../src/index'
@@ -27,14 +27,28 @@ interface DemoDomainEntry {
   statusColor?: string
   /** 左状态条独立控制：'bind'=随点（缺省语义），null=无条，色值=独立条色。 */
   statusBar?: 'bind' | null | string
+  /**
+   * true：内容跟工作区走，只在 `reference/open` 带 workspace 时认领。
+   * false：内容不跟工作区，只在事件没有 workspace 时认领。
+   */
+  workspaceBound: boolean
 }
 
 /** 2×2 对照域表：状态点 × 状态条 四种组合各一例，外加服务发现一例。 */
 export const DEMO_DOMAINS: Record<string, DemoDomainEntry> = {
-  'deployment/DEP-207': { kind: 'deployment', id: 'DEP-207', typeLabel: '部署', summary: '部署 DEP-207 已完成，服务健康检查通过。', status: 'succeeded', statusColor: '#4caf50', statusBar: 'bind' },
-  'report/VR-88': { kind: 'report', id: 'VR-88', typeLabel: '验证', summary: '验证运行 VR-88：全部断言 PASS。', status: 'passed', statusColor: '#4caf50', statusBar: null },
-  'evidence/EV-15': { kind: 'evidence', id: 'EV-15', typeLabel: '记录', summary: '证据 EV-15：日志摘录（含校验和）。', statusBar: '#64b5f6' },
-  'service/SRV-1': { kind: 'service', id: 'SRV-1', typeLabel: '服务', summary: '服务 SRV-1 在线，探针 3/3 通过。', status: 'live', statusColor: '#64b5f6', statusBar: 'bind' },
+  'deployment/DEP-207': { kind: 'deployment', id: 'DEP-207', typeLabel: '部署', summary: '部署 DEP-207 已完成，服务健康检查通过。', status: 'succeeded', statusColor: '#4caf50', statusBar: 'bind', workspaceBound: true },
+  'report/VR-88': { kind: 'report', id: 'VR-88', typeLabel: '验证', summary: '验证运行 VR-88：全部断言 PASS。', status: 'passed', statusColor: '#4caf50', statusBar: null, workspaceBound: true },
+  'evidence/EV-15': { kind: 'evidence', id: 'EV-15', typeLabel: '记录', summary: '证据 EV-15：日志摘录（含校验和）。', statusBar: '#64b5f6', workspaceBound: true },
+  'service/SRV-1': { kind: 'service', id: 'SRV-1', typeLabel: '服务', summary: '服务 SRV-1 在线，探针 3/3 通过。', status: 'live', statusColor: '#64b5f6', statusBar: 'bind', workspaceBound: false },
+}
+
+/** 工作区关联的条目只认带 workspace 的打开；不关联的条目只认没有 workspace 的打开。 */
+export function claimsDomain(
+  entry: DemoDomainEntry | undefined,
+  workspace: { id: string } | undefined,
+): boolean {
+  if (entry === undefined) return false
+  return entry.workspaceBound ? workspace !== undefined : workspace === undefined
 }
 
 export function addressOf(descriptor: ReferenceDescriptor): string {
@@ -135,7 +149,7 @@ export function DemoResourceTitle(props: Record<string, unknown>) {
   return createElement('span', { 'data-demo-resource-title': address }, `资源 ${id}`)
 }
 
-const DEMO_TAB_ID = 'dsh-reference-sidebar-demo/resource-object'
+const DEMO_TAB_ID = 'dsh-reference-render-sidebar-demo/resource-object'
 
 /* ============================== apply ============================== */
 
@@ -180,9 +194,9 @@ export function apply(ctx: Record<string, unknown> & {
     // 与悬浮预览贡献（reference.hover.content chain）；消费= 渲染接线插件的手工选举
     ctx.effect?.(() => slots.inject('reference.chip.decor', () =>
       slots.register(
-        { name: 'reference.chip.decor', select: (owner: { descriptor: ReferenceDescriptor }) => {
+        { name: 'reference.chip.decor', select: (owner: { descriptor: ReferenceDescriptor; workspace?: { id: string } }) => {
           const domain = domainOf(owner.descriptor)
-          if (domain === undefined) return null
+          if (domain === undefined || !claimsDomain(domain, owner.workspace)) return null
           const decor: ReferenceChipDecor = {
             typeLabel: domain.typeLabel,
             status: domain.status,
@@ -197,15 +211,15 @@ export function apply(ctx: Record<string, unknown> & {
 
     ctx.effect?.(() => slots.inject('reference.hover.content', () =>
       slots.register(
-        { name: 'reference.hover.content', select: (owner: { descriptor: ReferenceDescriptor }) => domainOf(owner.descriptor) !== undefined ? {} : null },
+        { name: 'reference.hover.content', select: (owner: { descriptor: ReferenceDescriptor; workspace?: { id: string } }) => claimsDomain(domainOf(owner.descriptor), owner.workspace) ? {} : null },
         DemoHoverCard,
       )), 'sidebar-demo: hover content')
   }
 
   // 4) 激活接管：demo 域 → sidebarRight.openResource
-  typedCtx.on('reference/open', ({ descriptor }) => {
-    if (domainOf(descriptor) === undefined) return undefined
-    typedCtx.sidebarRight?.openResource(descriptor.uri)
+  typedCtx.on('reference/open', (payload: { descriptor: ReferenceDescriptor; workspace?: { id: string } }) => {
+    if (!claimsDomain(domainOf(payload.descriptor), payload.workspace)) return undefined
+    typedCtx.sidebarRight?.openResource(payload.descriptor.uri)
     return referenceHandled()
   })
 }

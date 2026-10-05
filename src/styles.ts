@@ -4,7 +4,7 @@
  * chip 基础视觉随包交付（类名前缀 dsh-ref-chip 冻结为公共契约的一部分）；
  * 宿主/贡献方可用同名类做主题覆盖。重复注入幂等（style id 哨兵）。
  */
-export const REFERENCE_STYLE_ID = 'dsh-reference/styles'
+export const REFERENCE_STYLE_ID = 'dsh-reference-render/styles'
 
 export const REFERENCE_STYLES = `
 .dsh-ref-chip {

@@ -1,6 +1,6 @@
 /**
  * demo client：DSH Loader 格式（__ModuleLoader__ wrapper）。
- * dsh-reference 源码相对引入并打包（demo 自包含）；react/@deepseek-ai 走
+ * dsh-reference-render 源码相对引入并打包（demo 自包含）；react/@deepseek-ai 走
  * module table external。
  */
 export default [
@@ -13,7 +13,7 @@ export default [
     external: [/^react($|\/)/, /^react-dom($|\/)/, /^@deepseek-ai\//],
     banner: [
       `window.__ModuleLoader__.load({`,
-      `  id: 'dsh-reference-demo',`,
+      `  id: 'dsh-reference-render-demo',`,
       `  factory: (require) => {`,
       `    var module = { exports: {} };`,
       `    var exports = module.exports;`,

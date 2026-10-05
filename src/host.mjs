@@ -9,9 +9,11 @@
  * kind 词表是开放词表（域中立）：此处仅提供 authoring 教学用的默认参考表，
  * 宿主可经 patch row config.vocabulary 覆盖（config 面可选）。
  */
+export const name = 'dsh-reference-render'
+
 export const inject = ['systemPrompt']
 
-export const AUTHORING_GUIDANCE_SECTION_NAME = 'dsh-reference:structured-reference-authoring'
+export const AUTHORING_GUIDANCE_SECTION_NAME = 'dsh-reference-render:structured-reference-authoring'
 
 /** 默认教学词表（示例性、非白名单——解析器不做 kind 校验）。 */
 export const DEFAULT_AUTHORING_VOCABULARY = Object.freeze([

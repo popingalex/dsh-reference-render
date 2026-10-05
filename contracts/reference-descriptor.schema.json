@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/dsh-reference/dsh-reference/contracts/reference-descriptor.schema.json",
+  "$id": "dsh-reference-render/contracts/reference-descriptor.schema.json",
   "title": "ReferenceDescriptor v0.1",
   "description": "Domain-neutral structured reference descriptor. Carries identity and display info only — never canonical business state.",
   "type": "object",

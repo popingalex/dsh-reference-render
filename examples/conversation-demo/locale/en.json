@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Reference conversation demo",
+    "description": "Renders wire references as chips in the conversation and hosts hover previews. Domain data comes from the sidebar demo bundle."
+  }
+}

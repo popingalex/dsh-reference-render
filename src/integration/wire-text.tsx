@@ -125,7 +125,7 @@ class SegmentBoundary extends Component<{ fallback: string; children: ReactNode 
 
   componentDidCatch(error: unknown): void {
     if (process.env.NODE_ENV !== 'production' || process.env.VITEST === 'true') {
-      console.error('[dsh-reference] text segment provider failed:', error)
+      console.error('[dsh-reference-render] text segment provider failed:', error)
     }
   }
 

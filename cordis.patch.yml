@@ -1,5 +1,16 @@
-# dsh-reference host-half entry rows（官方 cordis.patch.yml 契约：顶层数组，逐条 EntryOptions）。
-# 插入本包 main（src/host.mjs）：authoring guidance systemPrompt 段。
-# client 半不经 patch 行——由 dsh.client.platform=web 模块图装载。
+# dsh-reference-render bundle patch.
+#
+# Official install:
+#
+#   dsh plugin --profile <name> add dsh-reference-render@0.1.0
+#
+# The command appends this package to the profile bundle list and applies
+# this file. Leave the profile's own cordis.patch.yml alone. A second insert
+# of id `dsh-reference-render` is refused at boot (duplicate loader entry id).
+#
+# The client half loads from package.json `dsh.client`, not from a row here.
+# Opening a reference goes through the host sidebarRight service. This patch
+# does not draw or replace the right column.
 - insert:
-    - name: dsh-reference
+    - id: dsh-reference-render
+      name: dsh-reference-render

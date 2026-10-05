@@ -1,21 +1,25 @@
 {
-  "name": "dsh-reference-sidebar-demo",
+  "name": "dsh-reference-render-sidebar-demo",
   "version": "0.1.1",
-  "description": "Demo content-contributor plugin for dsh-reference: resource sidebar tab (frame-stream provider + useResource body), hover preview contribution, and reference/open takeover. Acceptance/demo material.",
+  "description": "Demo content-contributor plugin for dsh-reference-render: resource sidebar tab (frame-stream provider + useResource body), hover preview contribution, and reference/open takeover. Acceptance/demo material.",
   "license": "MIT",
   "type": "module",
   "main": "./src/host.mjs",
   "exports": {
     ".": "./src/host.mjs",
-    "./client": "./lib/client.js"
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
   },
   "files": [
     "src",
     "lib",
+    "locale",
     "cordis.patch.yml",
     "README.md"
   ],
   "dsh": {
+    "manifestVersion": 1,
     "bundle": {
       "patch": "./cordis.patch.yml"
     },

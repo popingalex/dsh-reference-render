@@ -49,4 +49,4 @@ Build completed. See [RP-42](dsh-ref:report:RP-42).
 
 ## 兼容性
 
-v0.1 语法与产品内已验证语法逐字一致（externals/dsh-reference-renderer 同源）。后续版本如需扩展（如 namespace 前缀），必须保持 v0.1 输入的解析结果不变。
+v0.1 语法与已经验证过的 wire 语法逐字一致。后续版本如需扩展（如 namespace 前缀），必须保持 v0.1 输入的解析结果不变。

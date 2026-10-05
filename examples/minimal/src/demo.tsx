@@ -14,9 +14,9 @@ import {
   normalizeReference,
   scanWireReferences,
   useReferenceHover,
-} from 'dsh-reference/runtime'
+} from 'dsh-reference-render/runtime'
 import type { Context } from '@deepseek-ai/cordis'
-import type { ReferenceChipActivateDetail } from 'dsh-reference/runtime'
+import type { ReferenceChipActivateDetail } from 'dsh-reference-render/runtime'
 
 export const DEMO_TEXT = 'Build completed. See [RP-42](dsh-ref:report:RP-42) for details.'
 

@@ -40,7 +40,8 @@ function trackedRelPaths() {
   return out.toString('utf8').split('\0').filter(Boolean)
 }
 
-const files = trackedRelPaths().filter((rel) => !SELF_EXCLUDED.has(path.basename(rel)))
+const BINARY_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico'])
+const files = trackedRelPaths().filter((rel) => !SELF_EXCLUDED.has(path.basename(rel)) && !BINARY_EXT.has(path.extname(rel)))
 const findings = []
 for (const rel of files) {
   const text = readFileSync(path.join(root, rel)).toString('utf8')

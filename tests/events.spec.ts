@@ -11,6 +11,21 @@ function openContext(): ReferenceOpenContext {
 }
 
 describe('reference/open（typed Cordis event，ctx.serial）', () => {
+  it('carries workspace only when the caller supplies one', async () => {
+    const ctx = new Context()
+    const seen: ReferenceOpenContext[] = []
+    ctx.on('reference/open', (payload) => {
+      seen.push(payload)
+      return undefined
+    })
+    const bare = openContext()
+    await dispatchReferenceOpen(ctx, bare)
+    await dispatchReferenceOpen(ctx, { ...bare, workspace: { id: 'ws-1', title: 'default-workspace' } })
+    expect(seen[0]?.workspace).toBeUndefined()
+    expect(seen[1]?.workspace).toEqual({ id: 'ws-1', title: 'default-workspace' })
+    await ctx.fiber.dispose()
+  })
+
   it('no listener → undefined（无 consumer 时干净 no-op）', async () => {
     const ctx = new Context()
     expect(await dispatchReferenceOpen(ctx, openContext())).toBeUndefined()

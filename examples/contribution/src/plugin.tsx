@@ -19,7 +19,7 @@ import {
   referenceHandled,
   scanWireReferences,
   useReferenceHover,
-} from 'dsh-reference/runtime'
+} from 'dsh-reference-render/runtime'
 import type { Context } from '@deepseek-ai/cordis'
 
 export const CONVERSATION_FIXTURE = [

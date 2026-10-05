@@ -8,7 +8,7 @@ import { createElement } from 'react'
 import { act, fireEvent, render } from '@testing-library/react'
 import { normalizeReference } from '../src/index'
 import { apply as applyWiring, DemoAssistantNode, DemoUserNode } from '../examples/conversation-demo/src/client'
-import { apply as applyContent, DemoHoverCard, DEMO_DOMAINS } from '../examples/sidebar-demo/src/client'
+import { apply as applyContent, claimsDomain, DemoHoverCard, DEMO_DOMAINS } from '../examples/sidebar-demo/src/client'
 
 function makeSlots() {
   const registered: Array<{ options: Record<string, unknown>; component: unknown }> = []
@@ -34,6 +34,18 @@ function makeSlots() {
     resources: { register: () => {} },
     sidebarRightTabs: { register: () => {} },
     sidebarRight: { openResource: () => {} },
+    workspaces: {
+      list: {
+        getSnapshot: () => ({
+          items: [{
+            workspaceId: 'ws-demo',
+            title: 'default-workspace',
+            path: '/demo',
+            sessionIds: ['session-in'],
+          }],
+        }),
+      },
+    },
   }
   const runAll = () => { for (const effect of effects) effect() }
   ;(ctx as unknown as { __slotsRef: unknown }).__slotsRef = entriesBySlot
@@ -63,7 +75,7 @@ describe('conversation-demo（渲染接线）', () => {
       },
     }
     const { container } = render(
-      createElement(DemoAssistantNode, { node }),
+      createElement(DemoAssistantNode, { node, sessionId: 'session-in' }),
     )
     const chips = [...container.querySelectorAll('button.dsh-ref-chip')]
     expect(chips).toHaveLength(2)
@@ -85,7 +97,7 @@ describe('conversation-demo（渲染接线）', () => {
         content: [{ type: 'text', text: '请汇报 [VR-88](dsh-ref:report:VR-88)。' }],
       },
     }
-    const { container } = render(createElement(DemoUserNode, { node }))
+    const { container } = render(createElement(DemoUserNode, { node, sessionId: 'session-in' }))
     expect(container.querySelector('[data-demo-user-bubble]')).not.toBeNull()
     const chip = container.querySelector('button.dsh-ref-chip')!
     expect(chip.textContent).toContain('VR-88')
@@ -100,7 +112,7 @@ describe('conversation-demo（渲染接线）', () => {
     runAll()
     vi.useFakeTimers()
     const node = { data: { blocks: [{ kind: 'text', text: '[DEP-207](dsh-ref:deployment:DEP-207)' }] } }
-    const { container } = render(createElement(DemoAssistantNode, { node }))
+    const { container } = render(createElement(DemoAssistantNode, { node, sessionId: 'session-in' }))
     const chip = container.querySelector('button.dsh-ref-chip')!
     act(() => { fireEvent.mouseEnter(chip) })
     await act(async () => { await vi.advanceTimersByTimeAsync(300) })
@@ -120,6 +132,30 @@ describe('sidebar-demo（内容贡献方）', () => {
     expect(registered.some((entry) => entry.options.name === 'sidebar.right.pane.tab.title')).toBe(true)
     expect(registered.some((entry) => entry.options.name === 'reference.hover.content')).toBe(true)
     expect(registered.some((entry) => entry.options.name === 'reference.chip.decor')).toBe(true)
+  })
+
+  it('workspace-bound content stays plain when the session has no workspace', () => {
+    const { ctx, runAll } = makeSlots()
+    applyContent(ctx as never)
+    applyWiring(ctx as never)
+    runAll()
+    const node = {
+      data: {
+        blocks: [{
+          kind: 'text',
+          text: '[SRV-1](dsh-ref:service:SRV-1) and [DEP-207](dsh-ref:deployment:DEP-207).',
+        }],
+      },
+    }
+    const { container } = render(createElement(DemoAssistantNode, { node, sessionId: 'session-out' }))
+    const chips = [...container.querySelectorAll('button.dsh-ref-chip')]
+    const global = chips.find((chip) => chip.textContent?.includes('SRV-1'))!
+    expect(global.querySelector('[data-ref-chip-status="live"]')).not.toBeNull()
+    const bound = chips.find((chip) => chip.textContent?.includes('DEP-207'))!
+    expect(bound.querySelector('[data-ref-chip-status]')).toBeNull()
+    expect(claimsDomain(DEMO_DOMAINS['deployment/DEP-207'], undefined)).toBe(false)
+    expect(claimsDomain(DEMO_DOMAINS['service/SRV-1'], { id: 'ws-demo' })).toBe(false)
+    expect(claimsDomain(DEMO_DOMAINS['service/SRV-1'], undefined)).toBe(true)
   })
 
   it('hover card claims exactly the demo domains and renders domain content', () => {

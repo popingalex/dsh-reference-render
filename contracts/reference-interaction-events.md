@@ -8,7 +8,7 @@
 | 项 | 定义 |
 |---|---|
 | 通道 | cordis typed event，**serial 派发**（first-bail-wins） |
-| payload | `{ descriptor: ReferenceDescriptor, activation: 'keyboard' \| 'pointer' \| 'programmatic' }` |
+| payload | `{ descriptor, activation, workspace? }`。`workspace` 为 `{ id, title?, path? }`，只在打开引用的会话属于某个工作区时出现；会话不在任何工作区时省略该字段 |
 | 接管 | listener 返回 `{ handled: true }`（`referenceHandled()`）→ 短路 |
 | decline | 返回 `undefined` / `false` / `null` 之一（三值等价，与 cordis isBailed 语义一致） |
 | 全 decline | `dispatchReferenceOpen` 返回 `undefined`，调用方走默认/无操作 |

@@ -1,5 +1,5 @@
 /**
- * dsh-reference 的 typed Cordis 事件契约。
+ * dsh-reference-render 的 typed Cordis 事件契约。
  *
  * 只声明并派发 `reference/open`：hover 内容选择走 chain slot
  * （见 hover/contract.ts），不建第二套 selection registry。
@@ -13,9 +13,21 @@ import type { ReferenceDescriptor } from './descriptor'
 
 export type ReferenceActivation = 'keyboard' | 'pointer' | 'programmatic'
 
+/**
+ * 打开引用时所在会话的工作区。
+ * 会话属于某个工作区时带上；会话不在任何工作区时整段省略。
+ */
+export interface ReferenceWorkspaceRef {
+  readonly id: string
+  readonly title?: string
+  readonly path?: string
+}
+
 export interface ReferenceOpenContext {
   descriptor: ReferenceDescriptor
   activation: ReferenceActivation
+  /** 有工作区才出现。不带工作区的会话不要写这个字段。 */
+  workspace?: ReferenceWorkspaceRef
 }
 
 export interface ReferenceOpenResult {

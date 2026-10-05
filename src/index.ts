@@ -1,7 +1,8 @@
-/** dsh-reference 公开导出面（contract 边界：极小稳定接口）。 */
+/** dsh-reference-render 公开导出面（contract 边界：极小稳定接口）。 */
 export * from './descriptor'
 export * from './wire'
 export * from './events'
+export * from './workspace'
 export * from './hover'
 export * from './styles'
 export * from './integration'

@@ -1,9 +1,13 @@
 {
-  "name": "dsh-reference",
+  "name": "dsh-reference-render",
   "version": "0.1.0",
   "description": "Domain-neutral structured reference rendering & interaction primitives for DeepSeek Harness (DSH): wire syntax, reference chips, hover preview, and open-activation contracts.",
   "license": "MIT",
   "type": "module",
+  "icon": "./icon.svg",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./src/host.mjs",
   "types": "./src/host.d.mts",
   "exports": {
@@ -12,11 +16,17 @@
       "default": "./src/host.mjs"
     },
     "./client": "./lib/client.js",
-    "./runtime": "./lib/runtime.js"
+    "./runtime": "./lib/runtime.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json",
+    "./icon.svg": "./icon.svg"
   },
   "files": [
     "src",
     "lib",
+    "locale",
+    "icon.svg",
+    "docs",
     "contracts",
     "cordis.patch.yml",
     "README.md",
@@ -28,6 +38,7 @@
     "LICENSE"
   ],
   "dsh": {
+    "manifestVersion": 1,
     "bundle": {
       "patch": "./cordis.patch.yml"
     },
@@ -41,6 +52,7 @@
   },
   "scripts": {
     "build": "tsdown",
+    "prepare": "tsdown > /dev/null",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests scripts examples --max-warnings 0",
@@ -72,13 +84,10 @@
     "typescript-eslint": "^8.71.0",
     "vitest": "^4.1.8"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/dsh-reference/dsh-reference.git"
-  },
   "keywords": [
     "dsh",
     "dsh-plugin",
+    "deepseek",
     "reference",
     "conversation",
     "deepseek-harness"

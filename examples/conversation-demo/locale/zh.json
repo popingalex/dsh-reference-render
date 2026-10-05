@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "引用对话示例",
+    "description": "在对话里把 wire 引用渲染成 chip，并托管悬浮预览。领域数据来自 sidebar 示例组合包。"
+  }
+}

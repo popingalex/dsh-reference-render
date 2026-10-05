@@ -12,15 +12,20 @@
 | profile | web（官方模板 `@deepseek-ai/dsh-base` + web app-bundle） |
 | React | >=18（peer） |
 | @deepseek-ai/cordis | >=4.0.0（peer，optional——纯 type-only 依赖） |
+| manifest | `dsh.manifestVersion: 1`。当前安装器与加载器不根据该字段或 `engines.dsh` 拒绝安装；版本表仍以实测行为准 |
 
 ## Install paths（tested）
 
 | 路径 | 命令 | 状态 |
 |---|---|---|
-| npm tarball | `dsh plugin --profile <name> add <path-to-tgz>` | ✅ 本机全新 profile 实测 |
-| file/link dir | `dsh plugin --profile <name> add file:<dir>` | ✅（pnpm add 语义） |
-| npm registry | `dsh plugin --profile <name> add dsh-reference` | 尚未发布到 registry |
-| GitHub source | `dsh plugin --profile <name> add github:<owner>/<repo>` | 待 publish；**git 安装需要 profile `pnpm-workspace.yaml` allowBuilds 授权 prepare 脚本**（本包无 prepare/build 脚本时不需要） |
+| npm tarball | `dsh plugin --profile <name> add <path-to-tgz>` | ✅ 本机全新 profile 实测。包内已含 `lib/`，不需要 allowBuilds |
+| file/link dir | `dsh plugin --profile <name> add <dir>` | ✅（pnpm add 语义） |
+| npm registry | `dsh plugin --profile <name> add dsh-reference-render@0.1.0` | 尚未发布。发布后装到的是预构建 `lib/`。版本写死，不用 `@latest` |
+| git checkout | `dsh plugin --profile <name> add <git spec>` | `prepare` 会构建 `lib/`。pnpm 要求先在该 profile 的 `pnpm-workspace.yaml` 里 `allowBuilds` 放行，否则安装失败 |
+
+安装顺序：先 `dsh --profile <name> --from-default-profile web`，再 `dsh plugin add`。不要把 `cordis.patch.yml` 里的行抄进 profile 自己的 patch。卸载用 `dsh plugin remove`，它同时去掉依赖和层。
+
+在实测的 0.2.1-alpha.1 上，web 模板写入的 `pnpm-workspace.yaml` 把 profile 自己列为 workspace 包。pnpm 10 因此拒绝在 workspace 根执行 `pnpm add`，`dsh plugin add` 会失败并留下 `.plugin-manager/logs`。在该 profile 的 `.npmrc` 写入 `ignore-workspace-root-check=true` 后，同一条 `dsh plugin add` 可以装上 tarball 和本地目录。
 
 ## Unsupported / 未测
 

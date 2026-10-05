@@ -17,7 +17,7 @@ export default [
     external: [/^react($|\/)/, /^react-dom($|\/)/],
     banner: [
       `window.__ModuleLoader__.load({`,
-      `  id: 'dsh-reference',`,
+      `  id: 'dsh-reference-render',`,
       `  factory: (require) => {`,
       `    var module = { exports: {} };`,
       `    var exports = module.exports;`,

@@ -1,3 +1,4 @@
-# dsh-reference-sidebar-demo host 行（顶层数组契约）。host 半为空壳，行存在仅为装载 client 面。
+# Bundle patch. Installed by `dsh plugin add`; do not copy this row into the profile patch.
 - insert:
-    - name: dsh-reference-sidebar-demo
+    - id: dsh-reference-render-sidebar-demo
+      name: dsh-reference-render-sidebar-demo
