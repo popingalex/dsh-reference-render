@@ -12,7 +12,8 @@
  *
  * 前提：profile 已由 `dsh --profile <name> --from-default-profile web` 初始化。
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { randomUUID } from 'node:crypto'
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 
@@ -74,7 +75,7 @@ function zstdMultiFrame(frames, outPath) {
 
 function seedSession({ home, cwd, userText, demoText, title }) {
   const slug = projectKey(cwd)
-  const sid = 'session-' + cryptoUuid()
+  const sid = 'session-' + randomUUID()
   const now = Date.now()
   let seq = 0
   const ev = (type, data) => ({ type, seq: seq++, time: now + seq * 100, data })
@@ -105,21 +106,13 @@ function seedSession({ home, cwd, userText, demoText, title }) {
     ev('step/end', { turn: 1, step: 1 }),
     ev('turn/end', { turn: 1, reason: { kind: 'completed' } }),
   ]
-  const lines = events.map((e) => JSON.stringify(e, ensureAsciiSafe(e)))
+  const lines = events.map((e) => JSON.stringify(e))
   // header id 必须与目录一致（assertStoredIdentity）
   if (JSON.parse(lines[0]).id !== sid) throw new Error('header id mismatch')
   const dir = path.join(home, 'sessions', slug, sid)
   mkdirSync(dir, { recursive: true, mode: 0o700 })
   zstdMultiFrame([lines[0] + '\n', lines.slice(1).join('\n') + '\n'], path.join(dir, 'session.v4.jsonl.zstd'))
   return sid
-}
-
-function ensureAsciiSafe(obj) { return obj }
-
-// 演示用途的会话 id：随机十六进制拼接，无需严格 RFC 形态
-function uuid() {
-  const hex = () => Math.floor(Math.random() * 0xffff).toString(16).padStart(4, '0')
-  return `${hex()}${hex()}-${hex()}-4${hex().slice(1)}-8${hex().slice(1)}-${hex()}${hex()}${hex()}`
 }
 
 // 演示会话的 cwd：默认放在临时区（中性路径）；可用 DSH_DEMO_ROOT 覆盖
@@ -165,7 +158,7 @@ const extEntry = Object.values(ws.tables.workspaces).find((w) => w.path === B)
 if (extEntry !== undefined) {
   extEntry.sessionIds = [...new Set([...(extEntry.sessionIds ?? []), sidB])]
 } else {
-  const extId = uuid()
+  const extId = 'ws-' + randomUUID()
   ws.tables.workspaces[extId] = { path: B, title: 'external-demo', sessionIds: [sidB], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
   ws.global.workspaceIds = [...new Set([...(ws.global.workspaceIds ?? []), extId])]
 }

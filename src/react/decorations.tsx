@@ -18,8 +18,8 @@ import { createElement, type CSSProperties, type ReactNode } from 'react'
 export type RefIconSource = string
 
 export type RefDecoration =
-  | { kind: 'dot'; color?: string | undefined }
-  | { kind: 'bar'; color?: string | undefined }
+  | { kind: 'dot'; color?: string | undefined; size?: number | undefined }
+  | { kind: 'bar'; color?: string | undefined; size?: number | undefined }
   | { kind: 'icon'; src: RefIconSource; color?: string | undefined; mode?: 'tint' | 'image' | undefined; size?: number | undefined }
 
 export interface RefDecorationSides {
@@ -36,12 +36,13 @@ function safeSrc(src: string): string | undefined {
 
 function DecorationNode({ decoration }: { decoration: RefDecoration }): ReactNode {
   if (decoration.kind === 'dot') {
+    const size = decoration.size ?? 6
     return createElement('span', {
       'data-ref-decor': 'dot',
       style: {
         display: 'inline-block',
-        width: 6,
-        height: 6,
+        width: size,
+        height: size,
         borderRadius: 999,
         background: decoration.color ?? 'currentColor',
         flex: 'none',
@@ -49,12 +50,13 @@ function DecorationNode({ decoration }: { decoration: RefDecoration }): ReactNod
     })
   }
   if (decoration.kind === 'bar') {
+    const width = decoration.size ?? 3
     return createElement('span', {
       'data-ref-decor': 'bar',
       style: {
         display: 'inline-block',
-        width: 3,
-        height: 14,
+        width,
+        height: width * 4 + 2,
         borderRadius: 2,
         background: decoration.color ?? 'currentColor',
         flex: 'none',
@@ -70,6 +72,8 @@ function DecorationNode({ decoration }: { decoration: RefDecoration }): ReactNod
       'data-ref-decor': 'icon-image',
       src,
       alt: '',
+      loading: 'lazy',
+      referrerPolicy: 'no-referrer',
       style: { width: size, height: size, flex: 'none', verticalAlign: 'middle', borderRadius: 2 },
     })
   }

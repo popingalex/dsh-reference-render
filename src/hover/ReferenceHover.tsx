@@ -243,7 +243,11 @@ function HoverPanelBody({ state, renderContent, className }: HoverContentProps):
       className={className ? `${REFERENCE_HOVER_PANEL_CLASS} ${className}` : REFERENCE_HOVER_PANEL_CLASS}
       data-reference-hover-panel=""
       data-reference-hover-flip={flip || undefined}
-      style={{ position: 'fixed', left, top, zIndex: 50 }}
+      style={{
+        position: 'fixed', left, top, zIndex: 50,
+        maxHeight: flip ? rect.top - 8 : window.innerHeight - (rect.bottom + 6) - 8,
+        overflow: 'auto',
+      }}
       onMouseEnter={hold}
       onMouseLeave={resume}
     >
