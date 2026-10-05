@@ -45,7 +45,7 @@ chip activate
 | 纪律 | 机制 |
 |---|---|
 | renderer 不 import provider 实现 | 只有 slot 声明与类型共享；实现只经 slot/serial 相遇 |
-| provider failure 不炸对话面 | slot 面板全 null → 不渲染；文本段渲染崩溃 → SegmentBoundary 降级；serial listener throw → 由调用方胶水层隔离（契约明示） |
+| provider failure 不炸对话面 | slot 面板全 null → 不渲染；文本段渲染崩溃 → SegmentBoundary 降级；hover 内容崩溃 → HoverContentBoundary 收起面板；serial listener throw → 由调用方胶水层隔离（契约明示） |
 | unknown ref 安全 fallback | 无贡献方认领 → chip 无操作/纯文本；不报错不占位 UI |
 | async 不得覆盖新 hover 目标 | owner.signal（AbortSignal）换锚即 abort；贡献方取数必须尊重 |
 | dispose 干净移除 | `ctx.slots.inject` 返回值/`ctx.effect` 级联；装饰器 `restore()` 回滚 entry |

@@ -7,6 +7,7 @@
  * slot store 不用——chip 与 panel 在同一 React 子树，provider 局部状态即足够。
  */
 import {
+  Component,
   createContext,
   useCallback,
   useContext,
@@ -178,10 +179,45 @@ export interface ReferenceHoverPanelProps {
 }
 
 export function ReferenceHoverPanel({ renderContent, className }: ReferenceHoverPanelProps): ReactNode {
-  const { state, hold, resume, dismiss } = useReferenceHover()
+  const { state } = useReferenceHover()
+  if (state === null) return null
+  return <HoverContentBoundary state={state} renderContent={renderContent} className={className} />
+}
+
+/**
+ * 内容面故障隔离（contract: contribution —— provider failure does not crash
+ * conversation）：hover 内容选择器抛错时整个面板不渲染，异常不冒泡到会话树。
+ * 面板关闭即卸载，下一次 hover 自然回到未失败状态。
+ */
+interface HoverContentProps {
+  state: ReferenceHoverState
+  renderContent: (owner: ReferenceHoverOwnerProps) => ReactNode
+  className?: string | undefined
+}
+
+class HoverContentBoundary extends Component<HoverContentProps, { failed: boolean }> {
+  state = { failed: false }
+
+  static getDerivedStateFromError(): { failed: boolean } {
+    return { failed: true }
+  }
+
+  componentDidCatch(error: unknown): void {
+    if (process.env.NODE_ENV !== 'production' || process.env.VITEST === 'true') {
+      console.error('[dsh-reference-render] hover content provider failed:', error)
+    }
+  }
+
+  render(): ReactNode {
+    if (this.state.failed) return null
+    return <HoverPanelBody state={this.props.state} renderContent={this.props.renderContent} className={this.props.className} />
+  }
+}
+
+function HoverPanelBody({ state, renderContent, className }: HoverContentProps): ReactNode {
+  const { hold, resume, dismiss } = useReferenceHover()
 
   useEffect(() => {
-    if (state === null) return
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
       dismiss()
@@ -191,7 +227,6 @@ export function ReferenceHoverPanel({ renderContent, className }: ReferenceHover
     return () => window.removeEventListener('keydown', onKey)
   }, [state, dismiss])
 
-  if (state === null) return null
   const content = renderContent({ descriptor: state.descriptor, signal: state.signal })
   if (content === null || content === undefined) return null
   const rect = state.anchor.getBoundingClientRect()
