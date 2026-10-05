@@ -26,6 +26,11 @@ export interface ReferenceChipDecor {
   statusColor?: string | undefined
   /** 左状态条独立控制：'bind'=随点（缺省语义），null=无条，色值=独立条色。 */
   statusBar?: 'bind' | null | string | undefined
+  /** 广义装饰（点/条/图标 × 左右位，每侧各最多 3 个）。 */
+  decorations?: {
+    left?: Array<Record<string, unknown>>
+    right?: Array<Record<string, unknown>>
+  } | undefined
 }
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {

@@ -14,5 +14,8 @@ export {
   type ReferenceChipActivateDetail,
   type ReferenceChipProps,
   type StatusRefChipProps,
+  type RefDecoration,
+  type RefDecorationSides,
+  type RefIconSource,
 } from './react'
 export { REFERENCE_STYLE_ID, REFERENCE_STYLES, ensureReferenceStyles } from './styles'

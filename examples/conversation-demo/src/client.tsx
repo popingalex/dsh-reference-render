@@ -110,6 +110,7 @@ function makeRenderRef(slots: { entries(slot: string): readonly unknown[] } | un
       status: decor.status,
       statusColor: decor.statusColor,
       statusBar: decor.statusBar === 'bind' ? undefined : decor.statusBar,
+      decorations: decor.decorations as import('../../../src/index').RefDecorationSides | undefined,
       onActivate: segment.onActivate as never,
       onHoverStart: segment.onHoverStart as never,
       onHoverEnd: segment.onHoverEnd as never,

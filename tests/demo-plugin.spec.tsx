@@ -159,7 +159,7 @@ describe('sidebar-demo（内容贡献方）', () => {
   })
 
   it('hover card claims exactly the demo domains and renders domain content', () => {
-    expect(Object.keys(DEMO_DOMAINS)).toHaveLength(4)
+    expect(Object.keys(DEMO_DOMAINS)).toHaveLength(7)
     const descriptor = normalizeReference({ uri: 'dsh-ref:service:SRV-1' })!
     const { container } = render(createElement(DemoHoverCard, { descriptor }))
     expect(container.querySelector('[data-demo-hover="service/SRV-1"]')?.textContent).toContain('服务 SRV-1')

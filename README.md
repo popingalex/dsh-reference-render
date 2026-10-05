@@ -4,164 +4,53 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DSH 0.2.1-alpha.1](https://img.shields.io/badge/DSH-0.2.1--alpha.1-4d6bfe)](https://github.com/deepseek-ai/deepseek-harness)
-[![topic dsh-reference-render](https://img.shields.io/badge/topic-dsh--reference--render-4d6bfe)](https://github.com/topics/dsh-reference-render)
 ![dsh](https://img.shields.io/badge/dsh-4d6bfe)
 ![dsh-plugin](https://img.shields.io/badge/dsh--plugin-4d6bfe)
-![deepseek](https://img.shields.io/badge/deepseek-4d6bfe)
-![deepseek-harness](https://img.shields.io/badge/deepseek--harness-4d6bfe)
 
-![inline chip](https://img.shields.io/badge/-inline%20chip-4d6bfe)
-![hover](https://img.shields.io/badge/-hover-4d6bfe)
-![sidebar](https://img.shields.io/badge/-sidebar-4d6bfe)
-![workspace](https://img.shields.io/badge/-workspace-4d6bfe)
+Domain-neutral **structured reference rendering & interaction primitives** for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) conversations: `[label](dsh-ref:<kind>:<id>)` becomes an inline chip with hover preview and click-to-open. This package understands **no business domain** — content comes from other plugins through frozen contracts.
 
-Domain-neutral **structured reference rendering & interaction primitives** for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) conversations and panels.
-
-> No host edits. The plugin mounts as a bundle, and removing it leaves the host unchanged. Opening a reference uses the host right sidebar: a content plugin calls `sidebarRight.openResource` and registers a native tab. This package does not draw its own column.
-
-Turn structured text references into prominent inline chips, with hover previews, activation routing, and a contribution contract that lets **other plugins** supply domain content — while this package understands **no business domain at all**.
-
-```text
-Build completed. See [RP-42](dsh-ref:report:RP-42) for details.
-                 └ rendered as an inline chip: hover → preview, click → open
-```
-
-## Features
-
-- **Inline chips.** `[label](dsh-ref:<kind>:<id>)` renders as a chip in a DSH conversation and stays an ordinary link in plain markdown.
-- **Hover preview.** Other plugins contribute the body through `reference.hover.content`. With no claimant, no empty panel appears.
-- **Open.** A click dispatches `reference/open`. When the session belongs to a workspace, the payload includes `workspace: { id, title?, path? }`. When the session belongs to none, that field is absent.
-- **Content follows the workspace field.** In the examples, deployment, verification, and evidence claim only a session that has a workspace. Service SRV-1 claims only a session that has none. A reference that does not match stays a plain chip, and a click does nothing.
-- **Host right sidebar.** A claimant calls `sidebarRight.openResource` and registers a native tab.
-
-![Eight references: four dot and bar styles, with the hover preview and the right sidebar open](./docs/assets/demo/eight-refs-hover-sidebar.png)
-
-![Hover shows the preview; a click opens the resource in the right sidebar](./docs/assets/demo/hover-sidebar-demo.gif)
-
-Those two pictures need both example bundles installed alongside this package:
-
-| Bundle | npm name | Role |
-|---|---|---|
-| this package | `dsh-reference-render` | the primitives: wire syntax, chips, hover panel, open event |
-| rendering wiring | `dsh-reference-render-demo` | puts chips in the conversation and hosts the hover panel |
-| content claimant | `dsh-reference-render-sidebar-demo` | claims the content, opens it in the official right sidebar |
-
-The three together form one profile: primitives + wiring + content. This package alone does not put chips in the conversation — that is the wiring bundle's job, by design. Source and per-package steps are in the repository: [`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo) and [`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo).
-
-## Why
-
-DSH conversations carry structured references (issues, reports, deployments, knowledge…). Plain markdown links degrade to inert text. `dsh-reference-render` provides the missing primitive layer:
-
-- **wire syntax** — `[label](dsh-ref:<kind>:<id>)`, a GFM-link-compatible form that degrades safely in any renderer and is streaming-safe by construction;
-- **ReferenceDescriptor** — a domain-neutral identity (`uri` + open-vocabulary `kind`), never carrying canonical business state;
-- **inline chips** — accessible, styled, single visual implementation;
-- **hover previews** — debounce/grace lifecycle with AbortSignal stale-suppression, content contributed via a chain slot;
-- **activation** — `reference/open` typed cordis serial event (first-bail-wins) routing to whoever claims the reference;
-- **authoring guidance** — a systemPrompt section teaching agents the syntax and its discipline (never invent IDs).
+![Eight references: four dot and bar styles, icons on both sides, hover preview and right sidebar](./docs/assets/demo/eight-refs-hover-sidebar.png)
 
 ## Install
-
-Requires a working `dsh web`, Node.js `^22.19` or `>=24`, and pnpm 10+. Replace `web` with your profile name.
-
-This package is tested only on **DSH 0.2.1-alpha.1**. `engines.dsh` is that exact version. `@latest` and a caret range will track later releases that this package has not been tested with. The host's install-time compatibility check reads the `@deepseek-ai/dsh*` entries in `peerDependencies` — here `@deepseek-ai/dsh-client-ui-slots` — and rejects an install whose runtime version does not satisfy them. `engines.dsh` itself is declarative.
-
-| Your DSH | Install |
-|---|---|
-| **0.2.1-alpha.1** | `dsh plugin --profile web add dsh-reference-render@0.1.0` |
-| anything else | No supported release. Move DSH to 0.2.1-alpha.1 first |
-
-A build from this source tree installs from its tarball:
-
-```bash
-dsh --profile web --from-default-profile web
-dsh plugin --profile web add <path-to-dsh-reference-render-0.1.0.tgz>
-```
-
-Create the profile from the web template first. `dsh plugin add` on a name that does not exist yet creates a profile with no app bundle, and boot then shows nothing.
-
-`dsh plugin add` appends this package to the profile bundle list and applies the package `cordis.patch.yml`. Leave the profile's own `cordis.patch.yml` unchanged. A second insert of `id: dsh-reference-render` is refused at boot as a duplicate loader entry id.
-
-Confirm the layer before restarting:
-
-```bash
-dsh --profile web --dump-config | grep -A1 'id: dsh-reference-render'
-```
-
-Restart DSH Web after install. The host half registers a systemPrompt section, so a restart is required. A later client-only change is picked up by a hard refresh (Cmd/Ctrl+Shift+R).
-
-### Update
 
 ```bash
 dsh plugin --profile web add dsh-reference-render@0.1.0
 ```
 
-Pin the version. Restart afterwards. A client-only change needs only a hard refresh.
+Tested on DSH 0.2.1-alpha.1 only. Full matrix, demo bundles, git install, and troubleshooting: [docs/install.md](./docs/install.md).
 
-### Uninstall
-
-```bash
-dsh plugin --profile web remove dsh-reference-render
-```
-
-That removes the dependency and the bundle layer and leaves no core patch. Leave the profile `cordis.patch.yml` unchanged, then restart.
-
-### Install from source
-
-```text
-1. git clone <this repo> && cd dsh-reference-render && pnpm install && pnpm build
-2. dsh --profile web --from-default-profile web
-3. dsh plugin --profile web add <clone directory>
-4. dsh --profile web --dump-config | grep -A1 'id: dsh-reference-render'
-5. Restart DSH Web
-```
-
-A git install fetches source. `prepare` builds `lib/` after that fetch. pnpm skips a git dependency's `prepare` until the profile's `pnpm-workspace.yaml` lists it under `allowBuilds`. That entry is permission for the package to run code on the machine at install time.
-
-A registry install and a tarball (`npm pack`) already contain `lib/`. They do not need that permission.
-
-### Troubleshooting
-
-| What you see | What to do |
-|---|---|
-| No profile, or boot shows an empty UI | Run `dsh --profile web --from-default-profile web`, then `dsh plugin add` |
-| Boot reports a duplicate loader entry id | The profile `cordis.patch.yml` still has a handwritten `id: dsh-reference-render` row. Remove that row. Keep the layer `dsh plugin add` wrote into the bundle list |
-| `ERR_PNPM_ADDING_TO_ROOT` | This web template marks the profile as a pnpm workspace root. Add `ignore-workspace-root-check=true` to that profile's `.npmrc` and run the same `dsh plugin add`. Logs are under the profile's `.plugin-manager/logs` |
-| Git install has no `lib/` | Allow this package under `allowBuilds` in the profile `pnpm-workspace.yaml`, then install again |
-| Chips do not appear in the conversation | This package ships the chip, hover, and open primitives. Conversation wiring is the `dsh-reference-render-demo` bundle; the resource page is `dsh-reference-render-sidebar-demo`. Install all three into the same profile |
-
-See [COMPATIBILITY.md](./COMPATIBILITY.md) for the tested DSH/Node matrix.
+To reproduce the screenshots locally (a throwaway profile, two seeded conversations, no API key): [docs/local-demo.md](./docs/local-demo.md).
 
 ## Usage
 
-### Render wire references (any React surface)
+**Emit** — in any message, a plain GFM link becomes a chip; without the plugin it degrades to an ordinary link:
 
-```tsx
-import { WireText } from 'dsh-reference-render/runtime'
-
-<WireText
-  text={'Build completed. See [RP-42](dsh-ref:report:RP-42).'}
-  renderText={(text) => <MarkdownText text={text} streaming={streaming} labels={labels} />}
-/>
+```text
+Build completed. See [RP-42](dsh-ref:report:RP-42) for details.
 ```
 
-### Contribute hover content / claim activation (your plugin)
+**Decorate** — a content plugin claims a reference and supplies its decorations. Dot, bar, and icon are orthogonal; each can sit on either side, up to 3 per side (6 total). An icon without a color follows the system text color (CSS mask); `mode: 'image'` renders an original-color `<img>`:
+
+| Reference | Left | Right |
+|---|---|---|
+| deployment (claimed) | bar | dot |
+| verification (claimed) | — | dot |
+| evidence (claimed) | bar | — |
+| plan (claimed, icons) | icon, bar, dot | dot, bar, icon |
+| unclaimed (`gadget/MYST-2`) | — plain chip, hover and click are no-ops | |
+
+**Contribute** — content plugins claim references through two chain slots and one serial event:
 
 ```ts
-// hover preview — chain slot, first-match wins
 ctx.effect(() => ctx.slots.inject('reference.hover.content', () =>
-  ctx.slots.register({
-    name: 'reference.hover.content',
-    select: (owner) => owner.descriptor.kind === 'deployment' ? {} : null,
-  }, DeploymentHoverCard)))
+  ctx.slots.register({ name: 'reference.hover.content',
+    select: (owner) => isOurs(owner.descriptor) ? {} : null }, MyHoverCard)))
 
-// activation — typed serial event, first-taker wins
 ctx.on('reference/open', ({ descriptor }) =>
-  descriptor.kind === 'deployment' ? (openDeployment(descriptor), referenceHandled()) : undefined)
+  isOurs(descriptor) ? (ctx.sidebarRight.openResource(descriptor.uri), { handled: true }) : undefined)
 ```
 
-### Conversation integration
-
-The official `conversation.chat.node` keyed slot has **no public link-component seam** in DSH 0.2.1-alpha.1; this package therefore ships the building blocks rather than a takeover: `decorateChatNode` (community-standard in-place decorator with clean restore) + `WireText` segment renderer. Hosts that own a chat node body compose them; see [contracts/render-hook.md](./contracts/render-hook.md).
+Full contribution shapes (chip decorations, resource tab, activation payload): [contracts/reference-contribution.md](./contracts/reference-contribution.md).
 
 ## Contracts (frozen v0.1)
 
@@ -171,34 +60,22 @@ The official `conversation.chat.node` keyed slot has **no public link-component 
 | ReferenceDescriptor | [contracts/reference-descriptor.md](./contracts/reference-descriptor.md) / [schema](./contracts/reference-descriptor.schema.json) |
 | Render hook | [contracts/render-hook.md](./contracts/render-hook.md) |
 | Interaction events | [contracts/reference-interaction-events.md](./contracts/reference-interaction-events.md) |
-| Contribution | [contracts/reference-contribution.md](./contracts/reference-contribution.md) |
+| Contribution + decorations | [contracts/reference-contribution.md](./contracts/reference-contribution.md) |
 | Compatibility | [COMPATIBILITY.md](./COMPATIBILITY.md) |
 
-## Examples
+## Skill: teach your agent or plugin
 
-Runnable examples live in the repository, not in this package — a demonstration bundle is a
-separate DSH bundle with its own package name, not part of the primitive's tarball.
+[`skill/dsh-reference-rendering`](./skill/dsh-reference-rendering/SKILL.md) — a drop-in skill with two modes: **prompt-only** (a rules block that makes any agent emit resolvable `dsh-ref` links; no plugin needed, degrades to plain links) and **plugin integration** (the contribution contracts above, with the four non-negotiables that were silent failures in practice).
 
-Source (repository): [`examples/minimal`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/minimal) — text → parse → chip → hover, zero business domain.
-[`examples/contribution`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/contribution) — three fake domains (deployment/verification/evidence) contributing hover content and claiming activation around one domain-neutral protocol.
+## Examples & local demo
 
-Installable bundles (npm):
+Runnable examples live in the repository: [`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo) (conversation wiring) and [`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo) (content claimant), installed as the `dsh-reference-render-demo` and `dsh-reference-render-sidebar-demo` bundles.
 
-- `dsh-reference-render-demo` — rendering wiring: assistant and user renderers, hover panel host, `/` trigger source. Source: [`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo).
-- `dsh-reference-render-sidebar-demo` — content claimant: demo domain tables, four ResourceProvider frame streams, resource tab, hover card, chip decor. Source: [`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo).
-
-Both build their client with the primitives bundled in, so they install and run without a
-dependency edge back to this package.
-
-## Verify
-
-```bash
-pnpm verify   # typecheck → tests (incl. stream-split regression + security gate) → build → pack audit → sanitize scan
-```
+To reproduce the README screenshots on your machine: [docs/local-demo.md](./docs/local-demo.md).
 
 ## Boundary
 
-This renderer owns **no business truth**. It does not resolve domains, cache status, or duplicate canonical state — `View ≠ Truth`. Domains are contributed by plugins through the frozen contracts above.
+This renderer owns no business truth (`View ≠ Truth`). Domains are contributed by plugins; an unclaimed reference stays a plain chip, hover shows no panel, and a click does nothing. Removing the plugin leaves the host unchanged.
 
 ## License
 

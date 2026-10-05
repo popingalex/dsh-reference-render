@@ -32,6 +32,11 @@ interface DemoDomainEntry {
    * false：内容不跟工作区，只在事件没有 workspace 时认领。
    */
   workspaceBound: boolean
+  /** 广义装饰（点/条/图标 × 左右位，每侧各最多 3 个）；与便捷字段叠加。 */
+  decorations?: {
+    left?: Array<Record<string, unknown>>
+    right?: Array<Record<string, unknown>>
+  }
 }
 
 /** 2×2 对照域表：状态点 × 状态条 四种组合各一例，外加服务发现一例。 */
@@ -40,6 +45,16 @@ export const DEMO_DOMAINS: Record<string, DemoDomainEntry> = {
   'report/VR-88': { kind: 'report', id: 'VR-88', typeLabel: '验证', summary: '验证运行 VR-88：全部断言 PASS。', status: 'passed', statusColor: '#4caf50', statusBar: null, workspaceBound: true },
   'evidence/EV-15': { kind: 'evidence', id: 'EV-15', typeLabel: '记录', summary: '证据 EV-15：日志摘录（含校验和）。', statusBar: '#64b5f6', workspaceBound: true },
   'service/SRV-1': { kind: 'service', id: 'SRV-1', typeLabel: '服务', summary: '服务 SRV-1 在线，探针 3/3 通过。', status: 'live', statusColor: '#64b5f6', statusBar: 'bind', workspaceBound: false },
+  // 图标装饰三例：SVG tint（color 缺省跟随系统文本）/ 原色图片 / 六位全满
+  'knowledge/KN-ICON': { kind: 'knowledge', id: 'KN-ICON', typeLabel: '知识', summary: '知识卡片 KN-ICON：SVG 图标 tint 模式，未设色=跟随系统文本色。', statusBar: '#64b5f6', workspaceBound: true,
+    decorations: { left: [{ kind: 'icon', src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1l2.1 4.9L15 7l-4 3.4L12.2 15 8 12.3 3.8 15 5 10.4 1 7l4.9-1.1z'/%3E%3C/svg%3E" }] } },
+  'asset/PIC-1': { kind: 'asset', id: 'PIC-1', typeLabel: '素材', summary: '素材 PIC-1：彩色图片图标（image 模式，原色渲染）。', status: 'ready', statusColor: '#4caf50', workspaceBound: true,
+    decorations: { right: [{ kind: 'icon', src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', mode: 'image', size: 10 }] } },
+  'plan/PLAN-9': { kind: 'plan', id: 'PLAN-9', typeLabel: '计划', summary: '计划 PLAN-9：前后各 3 个装饰（2×3 六位全满）。', status: 'active', statusColor: '#ffb74d', statusBar: null, workspaceBound: true,
+    decorations: {
+      left: [{ kind: 'icon', src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='2' y='2' width='12' height='12' rx='2'/%3E%3C/svg%3E" }, { kind: 'bar', color: '#64b5f6' }, { kind: 'dot', color: '#4caf50' }],
+      right: [{ kind: 'bar', color: '#4caf50' }, { kind: 'icon', src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='5'/%3E%3C/svg%3E" }, { kind: 'dot', color: '#ffb74d' }],
+    } },
 }
 
 /** 工作区关联的条目只认带 workspace 的打开；不关联的条目只认没有 workspace 的打开。 */
@@ -202,6 +217,7 @@ export function apply(ctx: Record<string, unknown> & {
             status: domain.status,
             statusColor: domain.statusColor,
             statusBar: domain.statusBar,
+            decorations: domain.decorations as ReferenceChipDecor['decorations'],
           }
           return decor
         } },

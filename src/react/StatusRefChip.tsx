@@ -36,6 +36,8 @@ export interface StatusRefChipProps {
    * - null：显式无条（即使有状态点）。
    */
   statusBar?: string | null | undefined
+  /** 广义装饰（点/条/图标 × 左右位，每侧各最多 3 个）；与便捷 status/statusBar 字段叠加。 */
+  decorations?: import('./decorations').RefDecorationSides | undefined
   /** 权威流不可用时的占位文本（如「未解析」）——缺省仍显示 label，仅状态点为 none */
   children?: ReactNode
   onActivate?: ((detail: ReferenceChipActivateDetail) => void) | undefined
@@ -51,6 +53,7 @@ export function StatusRefChip({
   status,
   statusColor,
   statusBar,
+  decorations,
   children,
   onActivate,
   onHoverStart,
@@ -65,6 +68,20 @@ export function StatusRefChip({
   // 状态点：仅当宿主给出业务状态时显示——解析失败/服务不可达不标状态点
   const showStatusDot = status !== undefined && status !== ''
   const color = statusColor ?? (status !== undefined ? STATUS_REF_STATUS_COLORS[status] ?? STATUS_REF_STATUS_COLORS.none : undefined)
+  // 便捷字段换算为缺省装饰位：状态条→左、状态点→右。
+  // 显式 decorations 提供了某一侧时，该侧全权归调用方（便捷字段不再隐含叠加），
+  // 避免"隐含装饰挤占显式配额"的截断意外；未提供的侧仍享受便捷换算。
+  const barColor = statusBar === undefined ? (showStatusDot ? color : undefined) : (statusBar === null ? undefined : statusBar)
+  const merged: import('./decorations').RefDecorationSides = {
+    left: decorations?.left ?? (
+      statusBar !== null && barColor !== undefined
+        ? [{ kind: 'bar', color: barColor } as import('./decorations').RefDecoration]
+        : []),
+    right: decorations?.right ?? (
+      showStatusDot && color !== undefined
+        ? [{ kind: 'dot', color } as import('./decorations').RefDecoration]
+        : []),
+  }
   return (
     <ReferenceChip
       descriptor={descriptor}
@@ -72,25 +89,14 @@ export function StatusRefChip({
       onHoverStart={onHoverStart}
       onHoverEnd={onHoverEnd}
       disabled={disabled}
-      // 左状态条：缺省随状态点；statusBar 显式覆盖时点与条正交
-      statusBarColor={statusBar === undefined ? (showStatusDot ? color : undefined) : (statusBar === null ? undefined : statusBar)}
+      // 左状态条（border 视觉）：缺省随状态点；statusBar 显式覆盖时点与条正交
+      statusBarColor={barColor}
+      decorations={merged}
     >
       {showKind ? <span data-ref-chip-kind="">{typeLabel}</span> : null}
       <span data-ref-chip-label="">{children ?? labelText}</span>
-      {showStatusDot && color !== undefined ? (
-        <span
-          data-ref-chip-status={status}
-          title={status}
-          style={{
-            display: 'inline-block',
-            width: 6,
-            height: 6,
-            borderRadius: 999,
-            marginLeft: 4,
-            verticalAlign: 'middle',
-            background: color,
-          }}
-        />
+      {showStatusDot && status !== undefined ? (
+        <span data-ref-chip-status={status} title={status} hidden />
       ) : null}
     </ReferenceChip>
   )

@@ -233,11 +233,17 @@ function HoverPanelBody({ state, renderContent, className }: HoverContentProps):
   // 不用 createPortal：loader 环境下 module table 的 react-dom 与页面主 bundle
   // 可能不是同一份，portal 子树会落进另一个 renderer 的 dispatcher（React #321）。
   // inline fixed 定位视觉等价（面板悬浮于内容之上，无文档流影响）。
+  // 视口适配：下方放不下时翻到 anchor 上方；水平 clamp 留边。
+  const estimatedHeight = 160
+  const flip = rect.bottom + estimatedHeight + 8 > window.innerHeight && rect.top - estimatedHeight - 8 > 0
+  const left = Math.max(8, Math.min(rect.left, window.innerWidth - 328))
+  const top = flip ? Math.max(8, rect.top - estimatedHeight - 6) : rect.bottom + 6
   return (
     <div
       className={className ? `${REFERENCE_HOVER_PANEL_CLASS} ${className}` : REFERENCE_HOVER_PANEL_CLASS}
       data-reference-hover-panel=""
-      style={{ position: 'fixed', left: rect.left, top: rect.bottom + 6, zIndex: 50 }}
+      data-reference-hover-flip={flip || undefined}
+      style={{ position: 'fixed', left, top, zIndex: 50 }}
       onMouseEnter={hold}
       onMouseLeave={resume}
     >

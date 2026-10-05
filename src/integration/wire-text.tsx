@@ -9,7 +9,7 @@
  * 流式安全：半截 wire link 不满足闭括号 → 整段按纯文本渲染（wire 语法
  * 结构保证），下一帧文本补全后自然升级为 chip。
  */
-import { Component, createContext, Fragment, useContext, type ReactNode } from 'react'
+import { Component, createContext, Fragment, useContext, useMemo, type ReactNode } from 'react'
 import { splitWireSegments } from '../wire'
 import { ReferenceChip, type ReferenceChipActivateDetail } from '../react/ReferenceChip'
 import { useReferenceHover, type ReferenceHoverController } from '../hover/ReferenceHover'
@@ -68,7 +68,8 @@ export function WireText({ text, renderText, renderRef, onActivate, className, a
     // 无 ReferenceHoverProvider 的场景（面板/独立视图）——hover no-op
     hover = scoped.hover
   }
-  const segments = splitWireSegments(text)
+  // 同一文本流式重渲染（每帧全量重扫）的开销收敛：text 不变则复用切片结果
+  const segments = useMemo(() => splitWireSegments(text), [text])
   const Wrapper = as
   return (
     <Wrapper className={className}>

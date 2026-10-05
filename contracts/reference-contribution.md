@@ -53,3 +53,28 @@ chip activate
 ## 4. 测试锚
 
 `tests/integration.spec.tsx`（装饰器 wrap/restore/idempotent/injectFace、serial first-wins、provider 崩溃降级）、`tests/hover.spec.tsx`（换锚 abort）。
+
+## 5. Chip 装饰数据（reference.chip.decor chain）
+
+内容方经 `reference.chip.decor` chain 贡献**业务修饰数据**（matched 对象），渲染接线方选举后用自己的 StatusRefChip/ReferenceChip 渲染。matched 全部字段可选：
+
+| 字段 | 语义 |
+|---|---|
+| `typeLabel` / `label` | 类型标签 / 覆盖文本 |
+| `status` / `statusColor` | 状态点（右位缺省）与点色 |
+| `statusBar` | `'bind'`（条随点，缺省）\| `null`（无条）\| 色值（独立条，左位缺省） |
+| `decorations` | `{ left: RefDecoration[], right: RefDecoration[] }` —— 广义装饰，与便捷字段叠加渲染 |
+
+### RefDecoration（每侧各最多 3 个，共 6 位）
+
+```ts
+type RefDecoration =
+  | { kind: 'dot'; color?: string }                 // 色点（缺省 currentColor）
+  | { kind: 'bar'; color?: string }                 // 色条（缺省 currentColor）
+  | { kind: 'icon'; src: string;                    // http(s) 或 data:image/*
+      color?: string;                               // tint 模式的着色；缺省 currentColor（跟随系统文本）
+      mode?: 'tint' | 'image';                      // tint=mask 单色剪影；image=原色 <img>
+      size?: number }                               // 缺省 12px
+```
+
+icon 安全面：`src` 一律经 `<img>`/CSS mask 加载（SVG 不执行脚本）；`javascript:` 与非 `data:image` 一律拒绝渲染。

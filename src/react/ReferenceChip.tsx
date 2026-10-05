@@ -10,6 +10,7 @@
 import type { MouseEvent, ReactNode } from 'react'
 import type { ReferenceActivation } from '../events'
 import type { ReferenceDescriptor } from '../descriptor'
+import { Decorations, type RefDecorationSides } from './decorations'
 
 export interface ReferenceChipActivateDetail {
   descriptor: ReferenceDescriptor
@@ -33,6 +34,12 @@ export interface ReferenceChipProps {
    * 无状态资源（服务/知识等）**不传此值** = 不显示左状态条（chip 仍保留底色等与正文区分）。
    */
   statusBarColor?: string | undefined
+  /**
+   * 广义装饰：色点/色条/图标各自可放引用对象左侧或右侧，前后各最多 3 个
+   * （每类一个），共 6 个装饰位。与 statusBarColor 正交（后者仍作用于
+   * chip 的 border-left 视觉）。
+   */
+  decorations?: RefDecorationSides | undefined
 }
 
 export const REFERENCE_CHIP_CLASS = 'dsh-ref-chip'
@@ -54,6 +61,7 @@ export function ReferenceChip({
   disabled = false,
   className,
   statusBarColor,
+  decorations,
 }: ReferenceChipProps) {
   const text = children ?? displayText(descriptor)
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -77,7 +85,9 @@ export function ReferenceChip({
       onMouseLeave={onHoverEnd}
       style={showStatusBar ? { borderLeftColor: statusBarColor } : undefined}
     >
+      <Decorations decorations={decorations} side="left" />
       {text}
+      <Decorations decorations={decorations} side="right" />
     </button>
   )
 }
