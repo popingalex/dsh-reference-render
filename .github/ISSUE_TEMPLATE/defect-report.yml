@@ -1,0 +1,33 @@
+name: Defect report
+about: Something this package renders, parses, or activates incorrectly
+title: ""
+labels: defect
+body:
+  - type: markdown
+    attributes:
+      value: >
+        This package is domain-neutral: report defects about wire parsing, chip
+        rendering, hover state machine, open activation, or the contribution
+        contracts. Domain content belongs in the plugin that contributes it.
+  - type: textarea
+    attributes:
+      label: Wire text that reproduces it
+      description: The exact message text, as it appears before rendering.
+      placeholder: "[I-1](dsh-ref:issue:I-1)"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What happened / what should happen
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: DSH version and package version
+      description: "`dsh --version` and the installed `dsh-reference-render` version. Only 0.2.1-alpha.1 is a supported DSH runtime."
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Streaming or one-shot
+      description: Does it appear only while tokens arrive, only after the turn completes, or both?

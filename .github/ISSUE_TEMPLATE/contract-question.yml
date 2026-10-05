@@ -1,0 +1,29 @@
+name: Contract or domain question
+about: A change to wire grammar, contracts, or a question about contributing domain content
+title: ""
+labels: contract
+body:
+  - type: dropdown
+    attributes:
+      label: Which surface
+      options:
+        - wire grammar
+        - reference/open event
+        - reference.hover.content
+        - reference.chip.decor
+        - descriptor / resource addressing
+        - something else
+  - type: textarea
+    attributes:
+      label: What you need this package to do
+      description: >
+        State the behavior, not the implementation. If the request needs business
+        vocabulary (a specific kind, resolver, or endpoint), say so — those belong
+        in a contribution plugin, and this form is the right place to find out.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What breaks without it
+    validations:
+      required: true

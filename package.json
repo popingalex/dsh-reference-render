@@ -25,7 +25,10 @@
       "default": "./src/host.mjs"
     },
     "./client": "./lib/client.js",
-    "./runtime": "./lib/runtime.js",
+    "./runtime": {
+      "types": "./lib/runtime.d.ts",
+      "default": "./lib/runtime.js"
+    },
     "./package.json": "./package.json",
     "./locale/*.json": "./locale/*.json",
     "./icon.svg": "./icon.svg"
@@ -48,7 +51,6 @@
     "LICENSE"
   ],
   "dsh": {
-    "manifestVersion": 1,
     "bundle": {
       "patch": "./cordis.patch.yml"
     },
