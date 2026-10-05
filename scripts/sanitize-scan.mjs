@@ -75,7 +75,14 @@ if (releaseMode && releaseRules.length === 0) {
 }
 const activeRules = releaseMode ? [...RULES, ...releaseRules] : RULES
 
-const SELF_EXCLUDED = new Set(['sanitize-scan.mjs', 'private-rules.local.json'])
+/**
+ * Files whose job is to name what must not ship. A rule that forbids a filename
+ * has to spell that filename out, so the rule file matches itself — the same
+ * false positive a linter gets from its own suppression list. Exclude the rule
+ * carriers by basename everywhere, or a gate built to catch disclosure starts
+ * reporting its own source.
+ */
+const RULE_CARRIERS = new Set(['sanitize-scan.mjs', 'private-rules.local.json', 'pack-audit.mjs'])
 const BINARY_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico'])
 
 /** A pinned rule does not fire on surfaces outside its pin. */
@@ -89,7 +96,7 @@ function trackedRelPaths() {
 }
 
 function isScannable(rel) {
-  return !SELF_EXCLUDED.has(path.basename(rel)) && !BINARY_EXT.has(path.extname(rel))
+  return !RULE_CARRIERS.has(path.basename(rel)) && !BINARY_EXT.has(path.extname(rel))
 }
 
 function scanText(rel, text, rule, findings, surface) {
