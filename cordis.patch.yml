@@ -1,0 +1,5 @@
+# dsh-reference host-half entry rows（官方 cordis.patch.yml 契约：顶层数组，逐条 EntryOptions）。
+# 插入本包 main（src/host.mjs）：authoring guidance systemPrompt 段。
+# client 半不经 patch 行——由 dsh.client.platform=web 模块图装载。
+- insert:
+    - name: dsh-reference

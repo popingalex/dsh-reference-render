@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/dsh-reference/dsh-reference/contracts/reference-descriptor.schema.json",
+  "title": "ReferenceDescriptor v0.1",
+  "description": "Domain-neutral structured reference descriptor. Carries identity and display info only — never canonical business state.",
+  "type": "object",
+  "required": ["uri"],
+  "additionalProperties": false,
+  "properties": {
+    "uri": {
+      "type": "string",
+      "description": "Identity. Canonical form is dsh-resource://<kind>/<id>; the dsh-ref: alias is normalized into it, with the original alias preserved at metadata.alias.",
+      "pattern": "^.{1,2048}$",
+      "examples": ["dsh-resource://report/RP-42", "dsh-resource://issue/I-0001"]
+    },
+    "namespace": {
+      "const": "dsh-ref",
+      "description": "Reserved. Single value in v0.1; parse layer fills it, host layer must not require it."
+    },
+    "label": {
+      "type": "string",
+      "maxLength": 256,
+      "description": "Display label from the wire link text."
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 512,
+      "description": "Optional long-form title (tooltip)."
+    },
+    "kind": {
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^[^\\s():]+$",
+      "description": "Open vocabulary. The parser does not whitelist kinds (domain-neutral)."
+    },
+    "snapshot": {
+      "description": "Message-time immutable view data (optional). Never treated as canonical state."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Provenance and extensions. Known key: alias (original dsh-ref: uri).",
+      "additionalProperties": true
+    }
+  }
+}

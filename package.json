@@ -1,0 +1,86 @@
+{
+  "name": "dsh-reference",
+  "version": "0.1.0",
+  "description": "Domain-neutral structured reference rendering & interaction primitives for DeepSeek Harness (DSH): wire syntax, reference chips, hover preview, and open-activation contracts.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/host.mjs",
+  "types": "./src/host.d.mts",
+  "exports": {
+    ".": {
+      "types": "./src/host.d.mts",
+      "default": "./src/host.mjs"
+    },
+    "./client": "./lib/client.js",
+    "./runtime": "./lib/runtime.js"
+  },
+  "files": [
+    "src",
+    "lib",
+    "contracts",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh-CN.md",
+    "COMPATIBILITY.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0",
+    "dsh": "0.2.1-alpha.1"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests scripts examples --max-warnings 0",
+    "verify": "node scripts/verify.mjs",
+    "pack:audit": "npm pack --dry-run"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.0",
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.5-alpha.1",
+    "@deepseek-ai/dsh-client-ui-slots": "0.2.1-alpha.1",
+    "@testing-library/react": "^16.1.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "eslint": "^9.0.0",
+    "jsdom": "^29.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tsdown": "^0.22.2",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^4.1.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dsh-reference/dsh-reference.git"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "reference",
+    "conversation",
+    "deepseek-harness"
+  ]
+}

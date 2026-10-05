@@ -1,0 +1,3 @@
+# dsh-reference-sidebar-demo host 行（顶层数组契约）。host 半为空壳，行存在仅为装载 client 面。
+- insert:
+    - name: dsh-reference-sidebar-demo
