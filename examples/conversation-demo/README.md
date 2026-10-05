@@ -48,19 +48,20 @@
 
 ## 安装
 
-这两个目录各是一个组合包，和 `dsh-reference-render` 一样用 `dsh plugin add` 安装。先用 web 模板建 profile，再构建 client 产物并装进去。profile 自己的 `cordis.patch.yml` 保持原样。
+这两个目录各是一个组合包。先用 web 模板建 profile，在仓库根目录构建两个示例的 client 产物，再 `dsh plugin add`。`lib/` 不入库，所以要先构建；示例不设 `prepare`，避免安装时在 profile 里再跑一次构建。profile 自己的 `cordis.patch.yml` 不要抄进行。
 
-内容方把资源页注册成 DSH 官方右侧栏的原生 tab，点击 chip 时调用 `sidebarRight.openResource`。示例不自绘右列。
+内容方把资源页注册成 DSH 官方右侧栏的原生 tab，点击 chip 时调用 `sidebarRight.openResource`。示例不自绘右列。根包 `dsh-reference-render` 只提供原语和 systemPrompt，不负责这两张图；示例在构建期已经把源码打进自己的 client。
 
 ```bash
+dsh --profile web --from-default-profile web
 npm run build --prefix examples/conversation-demo
 npm run build --prefix examples/sidebar-demo
 dsh plugin --profile web add ./examples/conversation-demo
 dsh plugin --profile web add ./examples/sidebar-demo
-dsh --profile web --dump-config | grep -E 'id: dsh-reference-render'
+dsh --profile web --dump-config | grep -E 'id: dsh-reference-render-(demo|sidebar-demo)'
 ```
 
-`dump-config` 里应同时出现 `dsh-reference-render`、`dsh-reference-render-demo`、`dsh-reference-render-sidebar-demo` 三行。缺了 sidebar 那个包，点击 chip 只会打开空的右侧栏。
+`dump-config` 里应同时出现 `dsh-reference-render-demo` 和 `dsh-reference-render-sidebar-demo`。缺了 sidebar 那个包，点击 chip 只会打开空的右侧栏。若 `dsh plugin add` 报 `ERR_PNPM_ADDING_TO_ROOT`，在该 profile 的 `.npmrc` 写入 `ignore-workspace-root-check=true`，再跑同一条命令。装完重启 DSH Web。
 
 卸载：
 

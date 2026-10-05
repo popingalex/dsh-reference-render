@@ -38,6 +38,8 @@ Build completed. See [RP-42](dsh-ref:report:RP-42) for details.
 
 ![悬停显示预览，点击在右侧栏打开资源](./docs/assets/demo/hover-sidebar-demo.gif)
 
+这两张图要同时装上仓库里的两个示例组合包才出现。`examples/conversation-demo` 把输入和输出里的引用渲染成 chip，并托管悬浮面板。`examples/sidebar-demo` 认领内容，点击后用 `sidebarRight.openResource` 在官方右侧栏打开资源。只装本包时，对话里还没有 chip。步骤见 [examples/conversation-demo/README.md](./examples/conversation-demo/README.md)。
+
 ## 为什么
 
 DSH 对话承载结构化引用（事务、报告、部署、知识……）。普通 markdown link 会降级为惰性文本。`dsh-reference-render` 提供缺失的原语层：

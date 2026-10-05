@@ -4,17 +4,20 @@
   "description": "Demo content-contributor plugin for dsh-reference-render: resource sidebar tab (frame-stream provider + useResource body), hover preview contribution, and reference/open takeover. Acceptance/demo material.",
   "license": "MIT",
   "type": "module",
+  "icon": "./icon.svg",
   "main": "./src/host.mjs",
   "exports": {
     ".": "./src/host.mjs",
     "./client": "./lib/client.js",
     "./package.json": "./package.json",
-    "./locale/*.json": "./locale/*.json"
+    "./locale/*.json": "./locale/*.json",
+    "./icon.svg": "./icon.svg"
   },
   "files": [
     "src",
     "lib",
     "locale",
+    "icon.svg",
     "cordis.patch.yml",
     "README.md"
   ],

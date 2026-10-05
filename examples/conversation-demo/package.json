@@ -4,17 +4,20 @@
   "description": "Demo conversation integration for dsh-reference-render: renders wire references as chips in the real DSH conversation with hover previews and demo-domain sidebar claims. Demo/acceptance material \u2014 not for production use.",
   "license": "MIT",
   "type": "module",
+  "icon": "./icon.svg",
   "main": "./src/host.mjs",
   "exports": {
     ".": "./src/host.mjs",
     "./client": "./lib/client.js",
     "./package.json": "./package.json",
-    "./locale/*.json": "./locale/*.json"
+    "./locale/*.json": "./locale/*.json",
+    "./icon.svg": "./icon.svg"
   },
   "files": [
     "src",
     "lib",
     "locale",
+    "icon.svg",
     "cordis.patch.yml",
     "README.md"
   ],

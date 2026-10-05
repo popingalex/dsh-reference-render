@@ -38,6 +38,8 @@ Build completed. See [RP-42](dsh-ref:report:RP-42) for details.
 
 ![Hover shows the preview; a click opens the resource in the right sidebar](./docs/assets/demo/hover-sidebar-demo.gif)
 
+Those two pictures need both example bundles installed. `examples/conversation-demo` renders input and output references as chips and hosts the hover panel. `examples/sidebar-demo` claims the content and opens it in the official right sidebar through `sidebarRight.openResource`. This package alone does not put chips in the conversation. Steps are in [examples/conversation-demo/README.md](./examples/conversation-demo/README.md).
+
 ## Why
 
 DSH conversations carry structured references (issues, reports, deployments, knowledge…). Plain markdown links degrade to inert text. `dsh-reference-render` provides the missing primitive layer:
