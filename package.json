@@ -5,6 +5,15 @@
   "license": "MIT",
   "type": "module",
   "icon": "./icon.svg",
+  "author": "The dsh-reference-render Authors",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/popingalex/dsh-reference-render.git"
+  },
+  "bugs": {
+    "url": "https://github.com/popingalex/dsh-reference-render/issues"
+  },
+  "homepage": "https://github.com/popingalex/dsh-reference-render#readme",
   "publishConfig": {
     "access": "public"
   },

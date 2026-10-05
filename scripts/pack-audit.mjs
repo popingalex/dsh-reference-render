@@ -26,11 +26,10 @@ const forbidden = [
 ]
 const violations = entries.filter((entry) => forbidden.some((rule) => rule.test(entry)))
 
-const FORBIDDEN_RULES_SOURCE = forbidden.map((rule) => rule.source)
 const result = {
   audit: 'package-contents', packageName: packed[0]?.name, packageVersion: packed[0]?.version,
   fileCount: entries.length, files: entries,
-  forbiddenRules: FORBIDDEN_RULES_SOURCE, violations, passed: violations.length === 0,
+  violations, passed: violations.length === 0,
   auditedAt: new Date().toISOString(),
 }
 mkdirSync(path.join(root, 'acceptance'), { recursive: true })

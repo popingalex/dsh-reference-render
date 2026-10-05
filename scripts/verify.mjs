@@ -2,7 +2,7 @@
 /**
  * pnpm verify —— verification suite 统一入口。
  *
- * 机械执行：typecheck → unit/contract tests（含 stream-split 全边界回归 +
+ * 机械执行：lint → typecheck → unit/contract tests（含 stream-split 全边界回归 +
  * security gate）→ build → npm pack（dry-run）→ package contents audit →
  * sanitization scan。任一步失败即整体失败（fail-closed）。
  */
@@ -26,6 +26,7 @@ function run(name, command, args = [], env = {}) {
 
 mkdirSync(path.join(root, 'acceptance'), { recursive: true })
 
+run('lint', 'npx', ['eslint', 'src', 'tests', 'scripts', 'examples', '--max-warnings', '0'])
 run('typecheck', 'npx', ['tsc', '--noEmit'])
 run('tests', 'npx', ['vitest', 'run'])
 if (!failed) run('build', 'npx', ['tsdown'])
