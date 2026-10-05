@@ -13,7 +13,6 @@
  * 前提：profile 已由 `dsh --profile <name> --from-default-profile web` 初始化。
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
-import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 
@@ -34,6 +33,8 @@ const args = parseArgs(process.argv)
 
 /** projectKey：路径分隔符折叠为 '-'，首尾 '--' 包裹（与 session-persistence-jsonl/format.ts 对齐）。 */
 function projectKey(cwd) {
+  // 与 session-persistence-jsonl/format.ts projectKey 对齐：分隔符折叠 '-'，
+  // 非 [A-Za-z0-9._-] 且非分隔符的字节转义 ~XXXX，首尾 '--' 包裹。
   let readable = ''
   let separatorRun = false
   for (let i = 0; i < cwd.length; i++) {
@@ -42,12 +43,16 @@ function projectKey(cwd) {
     if (ch === '/' || ch === '\\' || ch === ':') {
       if (!separatorRun) readable += '-'
       separatorRun = true
-    } else {
+    } else if (ch !== '~' && /[A-Za-z0-9._-]/.test(ch)) {
       readable += ch
+      separatorRun = false
+    } else {
+      readable += '~' + code.toString(16).toUpperCase().padStart(4, '0')
       separatorRun = false
     }
   }
-  return `--${readable.replace(/^-+/, '') || 'root'}--`
+  const slug = readable.replace(/^-+/, '') || 'root'
+  return `--${slug.slice(0, 251)}--`
 }
 
 function zstdMultiFrame(frames, outPath) {
@@ -111,20 +116,16 @@ function seedSession({ home, cwd, userText, demoText, title }) {
 
 function ensureAsciiSafe(obj) { return obj }
 
-function cryptoUuid() {
-  return createHash('sha256').update(String(Math.random()) + Date.now()).digest('hex').slice(0, 8) + '-' +
-    createHash('sha256').update(String(Date.now())).digest('hex').slice(0, 4) + '-' +
-    Math.random().toString(16).slice(2, 6)
-}
-
-// 简化 uuid（演示用途）：时间+随机拼接即可，无需严格 RFC 形态
+// 演示用途的会话 id：随机十六进制拼接，无需严格 RFC 形态
 function uuid() {
   const hex = () => Math.floor(Math.random() * 0xffff).toString(16).padStart(4, '0')
   return `${hex()}${hex()}-${hex()}-4${hex().slice(1)}-8${hex().slice(1)}-${hex()}${hex()}${hex()}`
 }
 
-const A = '/Users/alexxu/Documents/deepseek-harness/default-workspace'
-const B = '/Users/alexxu/Documents/deepseek-harness/external-demo'
+// 演示会话的 cwd：默认放在临时区（中性路径）；可用 DSH_DEMO_ROOT 覆盖
+const demoRoot = process.env.DSH_DEMO_ROOT ?? '/tmp/dsh-reference-render-demo'
+const A = `${demoRoot}/workspace`
+const B = `${demoRoot}/external`
 mkdirSync(A, { recursive: true })
 mkdirSync(B, { recursive: true })
 

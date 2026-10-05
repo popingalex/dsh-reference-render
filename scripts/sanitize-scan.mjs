@@ -33,7 +33,7 @@ const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const RULES = [
   { name: 'developer-machine absolute path', pattern: /\/Users\/[A-Za-z0-9_.-]+\//, allowIn: ['CONTRIBUTING.md'] },
   { name: 'LAN IP', pattern: /192\.168\.\d{1,3}\.\d{1,3}/, allowIn: [] },
-  { name: 'localhost port 18xxx/44xx/518x (non-doc)', pattern: /(127\.0\.0\.1|localhost):(18\d{3}|44\d{2}|518\d)/, allowIn: ['COMPATIBILITY.md'] },
+  { name: 'localhost port 18xxx/44xx/518x (non-doc)', pattern: /(127\.0\.0\.1|localhost):(18\d{3}|44\d{2}|518\d)/, allowIn: ['COMPATIBILITY.md', 'docs/local-demo.md'] },
   { name: 'private key material', pattern: /(BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{30,})/, allowIn: [] },
   { name: 'private endpoint scope', pattern: /\.internal|\.local:|\.corp\b/, allowIn: [] },
   { name: 'private plan numbering', pattern: /goal \d{4}\/\d{2}|docs\/goals\/|规划 §|审计 R[0-9]|plan §[0-9]|R[0-7]\.[0-9]+|\bR[0-7]\b|0927/, allowIn: [] },
