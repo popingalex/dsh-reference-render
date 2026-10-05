@@ -34,19 +34,7 @@ Build completed. See [RP-42](dsh-ref:report:RP-42) for details.
 - **内容按工作区分流**。示例里部署、验证、记录只在带工作区的会话里认领；服务 SRV-1 只在不带工作区的会话里认领。对不上的引用留成素 chip，点击没有副作用。
 - **官方右侧栏**。认领成功后内容方调用 `sidebarRight.openResource`，注册的是原生 tab。
 
-![带工作区的会话：DEP-207 有状态，MYST-1 是素 chip](./docs/assets/readme/workspace-session.png)
-
-带工作区的会话。事件带 `workspace`。DEP-207 有状态点，MYST-1 没有认领方。
-
-![不带工作区的会话：SRV-1 有状态，DEP-207 留成素 chip](./docs/assets/readme/plain-session.png)
-
-不带工作区的会话。事件没有 `workspace`。SRV-1 被认领，工作区关联的 DEP-207 留成素 chip。
-
-输入和输出各有四种样式，一共 8 个引用：色点加色条、只有色点、只有色条、两者都没有。悬浮预览开在其中一枚上，右侧栏同时展开同一条资源。
-
 ![八个引用：四种色点与色条，悬浮预览与右侧栏同时打开](./docs/assets/demo/eight-refs-hover-sidebar.png)
-
-光标移到引用上会打开悬浮预览，点击后在右侧栏打开该资源。
 
 ![悬停显示预览，点击在右侧栏打开资源](./docs/assets/demo/hover-sidebar-demo.gif)
 

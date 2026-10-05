@@ -34,19 +34,7 @@ Build completed. See [RP-42](dsh-ref:report:RP-42) for details.
 - **Content follows the workspace field.** In the examples, deployment, verification, and evidence claim only a session that has a workspace. Service SRV-1 claims only a session that has none. A reference that does not match stays a plain chip, and a click does nothing.
 - **Host right sidebar.** A claimant calls `sidebarRight.openResource` and registers a native tab.
 
-![Session inside a workspace: DEP-207 has a status, MYST-1 is a plain chip](./docs/assets/readme/workspace-session.png)
-
-A session inside a workspace. The event includes `workspace`. DEP-207 shows a status dot. MYST-1 has no claimant.
-
-![Session outside every workspace: SRV-1 has a status, DEP-207 stays plain](./docs/assets/readme/plain-session.png)
-
-A session outside every workspace. The event omits `workspace`. SRV-1 is claimed. Workspace-bound DEP-207 stays a plain chip.
-
-Input and output each show the four styles, eight references in all: dot and bar, dot only, bar only, and neither. The hover preview is open on one of them, and the right sidebar shows that same resource.
-
 ![Eight references: four dot and bar styles, with the hover preview and the right sidebar open](./docs/assets/demo/eight-refs-hover-sidebar.png)
-
-Moving onto a reference opens the hover preview. Clicking it opens that resource in the right sidebar.
 
 ![Hover shows the preview; a click opens the resource in the right sidebar](./docs/assets/demo/hover-sidebar-demo.gif)
 
