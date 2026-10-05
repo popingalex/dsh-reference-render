@@ -2,6 +2,19 @@
 
 # dsh-reference-render
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DSH 0.2.1-alpha.1](https://img.shields.io/badge/DSH-0.2.1--alpha.1-4d6bfe)](https://github.com/deepseek-ai/deepseek-harness)
+[![topic dsh-reference-render](https://img.shields.io/badge/topic-dsh--reference--render-4d6bfe)](https://github.com/topics/dsh-reference-render)
+![dsh](https://img.shields.io/badge/dsh-4d6bfe)
+![dsh-plugin](https://img.shields.io/badge/dsh--plugin-4d6bfe)
+![deepseek](https://img.shields.io/badge/deepseek-4d6bfe)
+![deepseek-harness](https://img.shields.io/badge/deepseek--harness-4d6bfe)
+
+![行内引用](https://img.shields.io/badge/-行内引用-4d6bfe)
+![悬浮预览](https://img.shields.io/badge/-悬浮预览-4d6bfe)
+![右侧栏](https://img.shields.io/badge/-右侧栏-4d6bfe)
+![工作区](https://img.shields.io/badge/-工作区-4d6bfe)
+
 面向 [DeepSeek Harness（DSH）](https://github.com/deepseek-ai/deepseek-harness)对话与面板的**域中立结构化引用渲染与交互原语**。
 
 > 零核心改动，纯插件挂载。装上即用，卸了不留核心补丁。引用打开走 DSH 官方右侧栏：内容方调用 `sidebarRight.openResource`，并注册原生 tab。本包不自绘右列。
@@ -28,6 +41,14 @@ Build completed. See [RP-42](dsh-ref:report:RP-42) for details.
 ![不带工作区的会话：SRV-1 有状态，DEP-207 留成素 chip](./docs/assets/readme/plain-session.png)
 
 不带工作区的会话。事件没有 `workspace`。SRV-1 被认领，工作区关联的 DEP-207 留成素 chip。
+
+输入和输出各有四种样式，一共 8 个引用：色点加色条、只有色点、只有色条、两者都没有。悬浮预览开在其中一枚上，右侧栏同时展开同一条资源。
+
+![八个引用：四种色点与色条，悬浮预览与右侧栏同时打开](./docs/assets/demo/eight-refs-hover-sidebar.png)
+
+光标移到引用上会打开悬浮预览，点击后在右侧栏打开该资源。
+
+![悬停显示预览，点击在右侧栏打开资源](./docs/assets/demo/hover-sidebar-demo.gif)
 
 ## 为什么
 

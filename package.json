@@ -86,10 +86,11 @@
   },
   "keywords": [
     "dsh",
-    "dsh-plugin",
-    "deepseek",
     "reference",
-    "conversation",
-    "deepseek-harness"
+    "dsh-plugin",
+    "deepseek-harness",
+    "deepseek",
+    "dsh-reference-render",
+    "conversation"
   ]
 }

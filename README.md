@@ -2,6 +2,19 @@
 
 # dsh-reference-render
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DSH 0.2.1-alpha.1](https://img.shields.io/badge/DSH-0.2.1--alpha.1-4d6bfe)](https://github.com/deepseek-ai/deepseek-harness)
+[![topic dsh-reference-render](https://img.shields.io/badge/topic-dsh--reference--render-4d6bfe)](https://github.com/topics/dsh-reference-render)
+![dsh](https://img.shields.io/badge/dsh-4d6bfe)
+![dsh-plugin](https://img.shields.io/badge/dsh--plugin-4d6bfe)
+![deepseek](https://img.shields.io/badge/deepseek-4d6bfe)
+![deepseek-harness](https://img.shields.io/badge/deepseek--harness-4d6bfe)
+
+![inline chip](https://img.shields.io/badge/-inline%20chip-4d6bfe)
+![hover](https://img.shields.io/badge/-hover-4d6bfe)
+![sidebar](https://img.shields.io/badge/-sidebar-4d6bfe)
+![workspace](https://img.shields.io/badge/-workspace-4d6bfe)
+
 Domain-neutral **structured reference rendering & interaction primitives** for [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) conversations and panels.
 
 > Zero core edits. The plugin mounts as a bundle and leaves no core patch when removed. Opening a reference uses the host right sidebar: a content plugin calls `sidebarRight.openResource` and registers a native tab. This package does not draw its own column.
@@ -28,6 +41,14 @@ A session inside a workspace. The event includes `workspace`. DEP-207 shows a st
 ![Session outside every workspace: SRV-1 has a status, DEP-207 stays plain](./docs/assets/readme/plain-session.png)
 
 A session outside every workspace. The event omits `workspace`. SRV-1 is claimed. Workspace-bound DEP-207 stays a plain chip.
+
+Input and output each show the four styles, eight references in all: dot and bar, dot only, bar only, and neither. The hover preview is open on one of them, and the right sidebar shows that same resource.
+
+![Eight references: four dot and bar styles, with the hover preview and the right sidebar open](./docs/assets/demo/eight-refs-hover-sidebar.png)
+
+Moving onto a reference opens the hover preview. Clicking it opens that resource in the right sidebar.
+
+![Hover shows the preview; a click opens the resource in the right sidebar](./docs/assets/demo/hover-sidebar-demo.gif)
 
 ## Why
 
