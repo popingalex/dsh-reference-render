@@ -38,7 +38,15 @@ Build completed. See [RP-42](dsh-ref:report:RP-42) for details.
 
 ![Hover shows the preview; a click opens the resource in the right sidebar](./docs/assets/demo/hover-sidebar-demo.gif)
 
-Those two pictures need both example bundles installed. `examples/conversation-demo` renders input and output references as chips and hosts the hover panel. `examples/sidebar-demo` claims the content and opens it in the official right sidebar through `sidebarRight.openResource`. This package alone does not put chips in the conversation. Steps are in [examples/conversation-demo/README.md](./examples/conversation-demo/README.md).
+Those two pictures need both example bundles installed alongside this package:
+
+| Bundle | npm name | Role |
+|---|---|---|
+| this package | `dsh-reference-render` | the primitives: wire syntax, chips, hover panel, open event |
+| rendering wiring | `dsh-reference-render-demo` | puts chips in the conversation and hosts the hover panel |
+| content claimant | `dsh-reference-render-sidebar-demo` | claims the content, opens it in the official right sidebar |
+
+The three together form one profile: primitives + wiring + content. This package alone does not put chips in the conversation — that is the wiring bundle's job, by design. Source and per-package steps are in the repository: [`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo) and [`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo).
 
 ## Why
 
@@ -119,7 +127,7 @@ A registry install and a tarball (`npm pack`) already contain `lib/`. They do no
 | Boot reports a duplicate loader entry id | The profile `cordis.patch.yml` still has a handwritten `id: dsh-reference-render` row. Remove that row. Keep the layer `dsh plugin add` wrote into the bundle list |
 | `ERR_PNPM_ADDING_TO_ROOT` | This web template marks the profile as a pnpm workspace root. Add `ignore-workspace-root-check=true` to that profile's `.npmrc` and run the same `dsh plugin add`. Logs are under the profile's `.plugin-manager/logs` |
 | Git install has no `lib/` | Allow this package under `allowBuilds` in the profile `pnpm-workspace.yaml`, then install again |
-| Chips do not appear in the conversation | This package ships the chip, hover, and open primitives. Conversation wiring is `examples/conversation-demo`. The resource page is `examples/sidebar-demo`. See [examples/conversation-demo/README.md](./examples/conversation-demo/README.md) |
+| Chips do not appear in the conversation | This package ships the chip, hover, and open primitives. Conversation wiring is the `dsh-reference-render-demo` bundle; the resource page is `dsh-reference-render-sidebar-demo`. Install all three into the same profile |
 
 See [COMPATIBILITY.md](./COMPATIBILITY.md) for the tested DSH/Node matrix.
 
@@ -166,10 +174,21 @@ The official `conversation.chat.node` keyed slot has **no public link-component 
 | Contribution | [contracts/reference-contribution.md](./contracts/reference-contribution.md) |
 | Compatibility | [COMPATIBILITY.md](./COMPATIBILITY.md) |
 
-## Examples (executable, run in CI)
+## Examples
 
-- [examples/minimal](./examples/minimal) — text → parse → chip → hover, zero business domain.
-- [examples/contribution](./examples/contribution) — three fake domains (deployment/verification/evidence) contributing hover content and claiming activation around one domain-neutral protocol.
+Runnable examples live in the repository, not in this package — a demonstration bundle is a
+separate DSH bundle with its own package name, not part of the primitive's tarball.
+
+Source (repository): [`examples/minimal`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/minimal) — text → parse → chip → hover, zero business domain.
+[`examples/contribution`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/contribution) — three fake domains (deployment/verification/evidence) contributing hover content and claiming activation around one domain-neutral protocol.
+
+Installable bundles (npm):
+
+- `dsh-reference-render-demo` — rendering wiring: assistant and user renderers, hover panel host, `/` trigger source. Source: [`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo).
+- `dsh-reference-render-sidebar-demo` — content claimant: demo domain tables, four ResourceProvider frame streams, resource tab, hover card, chip decor. Source: [`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo).
+
+Both build their client with the primitives bundled in, so they install and run without a
+dependency edge back to this package.
 
 ## Verify
 

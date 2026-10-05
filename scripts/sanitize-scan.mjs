@@ -45,13 +45,24 @@ const RULES = [
  * scanner does not itself publish what it looks for. A rule marked
  * `releaseOnly` fires just at publication, where exposing a personal namespace
  * or commit identity is a decision the maintainer makes, not a per-PR defect.
+ *
+ * A rule may narrow itself with `pinSurfaces`: a repository owner string belongs
+ * in package.json `repository` and in README links — that is authorship — so the
+ * rule that catches it in commit metadata must not also fire on the working tree,
+ * or the scanner would forbid the package's own homepage. Pin to the surfaces
+ * where the same string can only mean leakage.
  */
 const localRulesPath = path.join(root, 'scripts', 'private-rules.local.json')
 const releaseRules = []
 if (existsSync(localRulesPath)) {
   const local = JSON.parse(readFileSync(localRulesPath, 'utf8'))
   for (const rule of local.rules ?? []) {
-    const entry = { name: rule.name, pattern: new RegExp(rule.pattern, rule.flags ?? 'u'), allowIn: rule.allowIn ?? [] }
+    const entry = {
+      name: rule.name,
+      pattern: new RegExp(rule.pattern, rule.flags ?? 'u'),
+      allowIn: rule.allowIn ?? [],
+      ...(rule.pinSurfaces ? { pinSurfaces: new Set(rule.pinSurfaces) } : {}),
+    }
     if (rule.releaseOnly) releaseRules.push(entry)
     else RULES.push(entry)
   }
@@ -67,6 +78,11 @@ const activeRules = releaseMode ? [...RULES, ...releaseRules] : RULES
 const SELF_EXCLUDED = new Set(['sanitize-scan.mjs', 'private-rules.local.json'])
 const BINARY_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.ico'])
 
+/** A pinned rule does not fire on surfaces outside its pin. */
+function ruleAppliesTo(rule, surface) {
+  return rule.pinSurfaces === undefined || rule.pinSurfaces.has(surface)
+}
+
 function trackedRelPaths() {
   const out = execFileSync('git', ['ls-files', '-z'], { cwd: root })
   return out.toString('utf8').split('\0').filter(Boolean)
@@ -78,6 +94,7 @@ function isScannable(rel) {
 
 function scanText(rel, text, rule, findings, surface) {
   if (rule.allowIn.includes(rel)) return
+  if (!ruleAppliesTo(rule, surface)) return
   const matches = text.match(new RegExp(rule.pattern.source, 'gu'))
   if (matches !== null) {
     findings.push({ surface, file: rel, rule: rule.name, count: matches.length, samples: matches.slice(0, 3) })
@@ -104,6 +121,7 @@ function reachableCommits() {
 function scanHistory(commits, findings) {
   let hits = 0
   for (const rule of activeRules) {
+    if (!ruleAppliesTo(rule, 'history')) continue
     let out = ''
     try {
       out = execFileSync('git', ['grep', '-I', '-n', '-P', '-e', rule.pattern.source, ...commits], {

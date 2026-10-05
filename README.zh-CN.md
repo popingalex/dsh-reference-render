@@ -38,7 +38,16 @@ Build completed. See [RP-42](dsh-ref:report:RP-42) for details.
 
 ![悬停显示预览，点击在右侧栏打开资源](./docs/assets/demo/hover-sidebar-demo.gif)
 
-这两张图要同时装上仓库里的两个示例组合包才出现。`examples/conversation-demo` 把输入和输出里的引用渲染成 chip，并托管悬浮面板。`examples/sidebar-demo` 认领内容，点击后用 `sidebarRight.openResource` 在官方右侧栏打开资源。只装本包时，对话里还没有 chip。步骤见 [examples/conversation-demo/README.md](./examples/conversation-demo/README.md)。
+这两张图要同时装上两个示例组合包才出现：
+
+| 组合包 | npm 包名 | 职责 |
+|---|---|---|
+| 本包 | `dsh-reference-render` | 原语层：wire 语法、chip、悬浮面板、open 事件 |
+| 渲染接线 | `dsh-reference-render-demo` | 把 chip 接进对话，并托管悬浮面板 |
+| 内容认领方 | `dsh-reference-render-sidebar-demo` | 认领内容，用 `sidebarRight.openResource` 在官方右侧栏打开 |
+
+三者合成一个 profile：原语 + 接线 + 内容。只装本包时对话里还没有 chip——这是设计如此，
+接线是接线包的事。源码与分步说明见仓库：[`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo)、[`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo)。
 
 ## 为什么
 
@@ -119,7 +128,7 @@ git 安装拿到的是源码。本包的 `prepare` 会在安装之后构建 `lib
 | 启动报 duplicate loader entry id | profile 的 `cordis.patch.yml` 里还有手写的 `id: dsh-reference-render`。删掉那段，只保留 `dsh plugin add` 写进组合包列表的那一层 |
 | `ERR_PNPM_ADDING_TO_ROOT` | 这个版本的 web 模板把 profile 标成 pnpm workspace 根。在该 profile 的 `.npmrc` 写入 `ignore-workspace-root-check=true`，再跑同一条 `dsh plugin add`。日志在 profile 的 `.plugin-manager/logs` |
 | git 安装后没有 `lib/` | 在 profile 的 `pnpm-workspace.yaml` 里为 `allowBuilds` 放行本包，然后重新安装 |
-| 装完对话里没有 chip | 本包只提供 chip、悬浮和打开原语。对话里的接线在 `examples/conversation-demo`，右侧资源页在 `examples/sidebar-demo`。见 [examples/conversation-demo/README.md](./examples/conversation-demo/README.md) |
+| 装完对话里没有 chip | 本包只提供 chip、悬浮和打开原语。对话接线在 `dsh-reference-render-demo`，右侧资源页在 `dsh-reference-render-sidebar-demo`。三个包装进同一个 profile |
 
 已测 DSH/Node 矩阵见 [COMPATIBILITY.md](./COMPATIBILITY.md)。
 
@@ -166,10 +175,20 @@ ctx.on('reference/open', ({ descriptor }) =>
 | 贡献契约 | [contracts/reference-contribution.md](./contracts/reference-contribution.md) |
 | 兼容性 | [COMPATIBILITY.md](./COMPATIBILITY.md) |
 
-## 示例（可执行，CI 中真实运行）
+## 示例
 
-- [examples/minimal](./examples/minimal)——text → parse → chip → hover，零业务域。
-- [examples/contribution](./examples/contribution)——三个 fake 域（deployment/verification/evidence）围绕同一个域中立协议贡献悬浮内容与认领激活。
+可运行示例在仓库里，不随本包装箱——示例组合包是独立的 DSH 组合包，有自己的包名，
+不属于原语包的 tarball。
+
+源码（仓库）：[`examples/minimal`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/minimal)——text → parse → chip → hover，零业务域。
+[`examples/contribution`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/contribution)——三个 fake 域（deployment/verification/evidence）围绕同一个域中立协议贡献悬浮内容与认领激活。
+
+可安装组合包（npm）：
+
+- `dsh-reference-render-demo`——渲染接线：assistant 与 user 双渲染器、悬浮面板宿主、`/` 触发源。源码：[`examples/conversation-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/conversation-demo)。
+- `dsh-reference-render-sidebar-demo`——内容认领方：demo 域表、四个 ResourceProvider 帧流、资源 tab、hover 卡片、chip 修饰。源码：[`examples/sidebar-demo`](https://github.com/popingalex/dsh-reference-render/tree/main/examples/sidebar-demo)。
+
+两者构建时把原语一并打进产物，因此装上即可运行，不需要指回本包的依赖边。
 
 ## 验证
 

@@ -1,8 +1,20 @@
 {
   "name": "dsh-reference-render-demo",
   "version": "0.2.3",
-  "description": "Demo conversation integration for dsh-reference-render: renders wire references as chips in the real DSH conversation with hover previews and demo-domain sidebar claims. Demo/acceptance material \u2014 not for production use.",
+  "description": "Demo conversation integration for dsh-reference-render: renders wire references as chips in the real DSH conversation with hover previews and demo-domain sidebar claims. Demo/acceptance material — not for production use.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/popingalex/dsh-reference-render.git",
+    "directory": "examples/conversation-demo"
+  },
+  "bugs": {
+    "url": "https://github.com/popingalex/dsh-reference-render/issues"
+  },
+  "homepage": "https://github.com/popingalex/dsh-reference-render#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "icon": "./icon.svg",
   "main": "./src/host.mjs",
@@ -22,7 +34,6 @@
     "README.md"
   ],
   "dsh": {
-    "manifestVersion": 1,
     "bundle": {
       "patch": "./cordis.patch.yml"
     },
@@ -44,7 +55,8 @@
     "react": ">=18"
   },
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "prepare": "tsdown > /dev/null"
   },
   "devDependencies": {
     "tsdown": "^0.22.2"

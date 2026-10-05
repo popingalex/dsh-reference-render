@@ -3,6 +3,18 @@
   "version": "0.1.1",
   "description": "Demo content-contributor plugin for dsh-reference-render: resource sidebar tab (frame-stream provider + useResource body), hover preview contribution, and reference/open takeover. Acceptance/demo material.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/popingalex/dsh-reference-render.git",
+    "directory": "examples/sidebar-demo"
+  },
+  "bugs": {
+    "url": "https://github.com/popingalex/dsh-reference-render/issues"
+  },
+  "homepage": "https://github.com/popingalex/dsh-reference-render#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "icon": "./icon.svg",
   "main": "./src/host.mjs",
@@ -22,7 +34,6 @@
     "README.md"
   ],
   "dsh": {
-    "manifestVersion": 1,
     "bundle": {
       "patch": "./cordis.patch.yml"
     },
@@ -43,7 +54,8 @@
     "react": ">=18"
   },
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "prepare": "tsdown > /dev/null"
   },
   "devDependencies": {
     "tsdown": "^0.22.2"
