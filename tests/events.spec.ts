@@ -93,4 +93,36 @@ describe('reference/open（typed Cordis event，ctx.serial）', () => {
     expect(await dispatchReferenceOpen(ctx, openContext())).toBeUndefined()
     await ctx.fiber.dispose()
   })
+
+  it('duplicate provider（同一贡献方重复注册）→ 首个仍接管，派发不报错', async () => {
+    const ctx = new Context()
+    const claim = () => referenceHandled()
+    const first = ctx.plugin({ apply: (scope) => scope.on('reference/open', claim) })
+    const second = ctx.plugin({ apply: (scope) => scope.on('reference/open', claim) })
+    await Promise.all([first, second])
+    expect(await dispatchReferenceOpen(ctx, openContext())).toEqual({ handled: true })
+    await second.dispose()
+    expect(await dispatchReferenceOpen(ctx, openContext())).toEqual({ handled: true })
+    await first.dispose()
+    expect(await dispatchReferenceOpen(ctx, openContext())).toBeUndefined()
+    await ctx.fiber.dispose()
+  })
+
+  it('provider switch（旧贡献方卸载后新贡献方接管）→ 重新选举，无残留接管', async () => {
+    const ctx = new Context()
+    const a = vi.fn(() => referenceHandled())
+    const b = vi.fn(() => undefined)
+    const fiberA = ctx.plugin({ apply: (scope) => scope.on('reference/open', a) })
+    await fiberA
+    expect(await dispatchReferenceOpen(ctx, openContext())).toEqual({ handled: true })
+    const fiberB = ctx.plugin({ apply: (scope) => scope.on('reference/open', b) })
+    await fiberB
+    await fiberA.dispose()
+    expect(await dispatchReferenceOpen(ctx, openContext())).toBeUndefined()
+    expect(b).toHaveBeenCalledTimes(1)
+    expect(a).toHaveBeenCalledTimes(1)
+    await fiberB.dispose()
+    expect(await dispatchReferenceOpen(ctx, openContext())).toBeUndefined()
+    await ctx.fiber.dispose()
+  })
 })

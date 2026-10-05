@@ -92,3 +92,53 @@ describe('splitWireSegments（conversation 宿主切片采用面）', () => {
     expect(segments[1]!.type).toBe('ref')
   })
 })
+
+describe('畸形输入退化（负向面）', () => {
+  it('嵌套畸形标记：不抛错，切片重建无损等于原文', () => {
+    for (const text of [
+      '[a](dsh-ref:issue:[b](dsh-ref:issue:I-1))',
+      '[[x]](dsh-ref:issue:I-1)',
+      '[a](dsh-ref:issue:I-1(unclosed',
+      '[a](dsh-ref::I-1)',
+      '[a](dsh-ref:issue:)',
+      '[a](dsh-ref:issue:I-1) 尾随 [b](dsh-ref:)',
+    ]) {
+      const segments = splitWireSegments(text)
+      const rebuilt = segments.map((segment) => (segment.type === 'text' ? segment.text : segment.raw)).join('')
+      expect(rebuilt).toBe(text)
+    }
+  })
+
+  it('同一段文本内多处畸形引用：全部按原文降级，合法引用照常识别', () => {
+    const text = '坏 [a](dsh-ref:broken) 坏 [b](dsh-ref:) 好 [I-1](dsh-ref:issue:I-1) 坏 [c](dsh-ref:issue:)'
+    const refs = scanWireReferences(text)
+    expect(refs).toHaveLength(1)
+    expect(refs[0]!.descriptor.uri).toBe('dsh-resource://issue/I-1')
+    const segments = splitWireSegments(text)
+    expect(segments.filter((segment) => segment.type === 'ref')).toHaveLength(1)
+    expect(segments.filter((segment) => segment.type === 'text')).toHaveLength(2)
+  })
+
+  it('超长输入：解析完成且引用偏移保持自洽', () => {
+    const filler = '这是一段用于压力测试的中文与 english 混合正文。\n'.repeat(2000)
+    const text = `${filler}[I-1](dsh-ref:issue:I-1)${filler}[KB-2](dsh-ref:knowledge:KB-2)${filler}`
+    const refs = scanWireReferences(text)
+    expect(refs.map((ref) => ref.descriptor.uri)).toEqual([
+      'dsh-resource://issue/I-1',
+      'dsh-resource://knowledge/KB-2',
+    ])
+    for (const ref of refs) {
+      expect(text.slice(ref.index, ref.endIndex)).toBe(ref.raw)
+    }
+    const segments = splitWireSegments(text)
+    expect(segments).toHaveLength(5)
+    expect(segments.reduce((total, segment) => total + (segment.type === 'text' ? segment.text.length : segment.raw.length), 0))
+      .toBe(text.length)
+  })
+
+  it('纯畸形长输入：零引用且整段作为文本返回', () => {
+    const text = '[x](dsh-ref:broken)'.repeat(500)
+    expect(scanWireReferences(text)).toEqual([])
+    expect(splitWireSegments(text)).toEqual([{ type: 'text', text }])
+  })
+})
