@@ -20,4 +20,4 @@ pnpm verify      # full gate
 
 ## Releasing
 
-Tagged releases run the release workflow: tag must equal package.json version, clean build, verify PASS, pack audit PASS, checksums recorded. Publication itself is executed by maintainers with authorized credentials.
+Maintainers publish. `pnpm verify` must pass before a release. This repository does not carry a release plan.

@@ -6,3 +6,4 @@ scripts/private-rules.local.json
 *.tgz
 *.log
 .DS_Store
+**/goals/

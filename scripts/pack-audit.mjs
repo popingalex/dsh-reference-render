@@ -13,7 +13,17 @@ const dryRun = execFileSync('npm', ['pack', '--dry-run', '--json'], { cwd: root,
 const jsonStart = dryRun.indexOf('[')
 const packed = JSON.parse(jsonStart >= 0 ? dryRun.slice(jsonStart) : dryRun)
 const entries = (packed[0]?.files ?? []).map((file) => file.path).sort()
-const forbidden = [/(^|\/)node_modules\//, /pnpm-lock\.yaml$/, /package-lock\.json$/, /\.dsh-home/, /acceptance\//]
+const forbidden = [
+  /(^|\/)node_modules\//,
+  /pnpm-lock\.yaml$/,
+  /package-lock\.json$/,
+  /\.dsh-home/,
+  /acceptance\//,
+  /(^|\/)docs\/goals\//,
+  /(^|\/)PUBLICATION-RUNBOOK\.md$/,
+  /(^|\/)00-execution-status\.md$/,
+  /(^|\/)REPORT\.md$/,
+]
 const violations = entries.filter((entry) => forbidden.some((rule) => rule.test(entry)))
 
 const FORBIDDEN_RULES_SOURCE = forbidden.map((rule) => rule.source)
