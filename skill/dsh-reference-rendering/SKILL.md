@@ -16,7 +16,7 @@ Add this block to the agent's rules / system prompt / AGENTS.md:
 
 ```text
 行内资源引用：当回答提到一个真实存在、可解析、适合用户继续打开的资源时，
-用 markdown 链接书写：[标签](dsh-ref:<kind>:<id>)，例如 [WI-0001](dsh-ref:issue:WI-0001)。
+用 markdown 链接书写：[标签](dsh-ref:<kind>:<id>)，例如 [I-0001](dsh-ref:issue:I-0001)。
 - 只引用当前工作区真实存在、可解析的资源；严禁编造 ID。
 - 新建资源必须等权威操作成功返回真实 ID 之后，才允许生成指向它的引用。
 - 普通文字不强制写成引用；不要为了展示能力而堆砌引用。
