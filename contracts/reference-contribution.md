@@ -81,4 +81,10 @@ icon 安全面：`src` 一律经 `<img>`/CSS mask 加载（SVG 不执行脚本�
 
 ### 视觉位置裁决（渲染方固定）
 
-装饰的**视觉位置由渲染方固定，贡献方数组顺序不改变视觉位置**：`bar` 恒在最外侧（紧贴 chip 边缘），`icon` 居中，`dot` 最靠内容——left 侧渲染序 `[bar, icon, dot]`，right 侧镜像 `[dot, icon, bar]`。贡献方只需声明"有哪些装饰"，无需（也无法）通过数组顺序控制位置。同类型多个装饰保持数组原序。
+装饰的**视觉位置由渲染方固定，贡献方数组顺序不改变视觉位置**：
+
+- `bar` **渲染为 chip 的 border-left/right 段**——贴 chip 边缘、全高、结构上恒在最外（border 不可被 flex 兄弟挤开）；不再是一个内联小条。
+- `icon` 居中、`dot` 最靠内容——内联元素，left 侧渲染序 `[icon, dot]`，right 侧镜像 `[dot, icon]`。
+- 同类型多个装饰保持数组原序。
+
+即六位全满时：左缘 bar(border) → icon → dot → 文本 → dot → icon → 右缘 bar(border)。
