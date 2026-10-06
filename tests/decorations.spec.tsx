@@ -27,19 +27,18 @@ describe('ReferenceChip.decorations 六装饰位', () => {
         X-1
       </ReferenceChip>,
     )
+    const chip = container.querySelector('button')!
+    expect(chip.style.borderLeftColor).toBe('rgb(76, 175, 80)') // bar → 贴边条（border-left，浏览器归一化为 rgb）
     const left = container.querySelectorAll('[data-ref-decorations="left"] [data-ref-decor]')
+    expect(left).toHaveLength(1)
+    expect(left[0]!.getAttribute('data-ref-decor')).toBe('icon-tint')
     const right = container.querySelectorAll('[data-ref-decorations="right"] [data-ref-decor]')
-    expect(left).toHaveLength(2)
-    expect(left[0]!.getAttribute('data-ref-decor')).toBe('bar')
-    expect(left[1]!.getAttribute('data-ref-decor')).toBe('icon-tint')
     expect(right).toHaveLength(1)
     expect(right[0]!.getAttribute('data-ref-decor')).toBe('dot')
     // 顺序：左装饰在文本前、右装饰在文本后
-    const button = container.querySelector('button')!
-    const html = button.innerHTML
+    const html = chip.innerHTML
     expect(html.indexOf('data-ref-decorations="left"')).toBeLessThan(html.indexOf('X-1'))
     expect(html.lastIndexOf('X-1')).toBeLessThan(html.indexOf('data-ref-decorations="right"'))
-    void right
   })
 
   it('clamps each side to 3 decorations', () => {
@@ -49,7 +48,9 @@ describe('ReferenceChip.decorations 六装饰位', () => {
     const { container } = render(
       <ReferenceChip descriptor={base} decorations={{ right: four }}>X</ReferenceChip>,
     )
+    // bar 抽为边缘条（border），内联剩 icon + dot×2 = 3
     expect(container.querySelectorAll('[data-ref-decor]')).toHaveLength(3)
+    expect(container.querySelector('button')!.style.borderRightColor).toBe('red')
   })
 
   it('icon tint defaults to currentColor; image mode renders an img', () => {
@@ -79,9 +80,10 @@ describe('ReferenceChip.decorations 六装饰位', () => {
 })
 
 describe('StatusRefChip decorations 换算与叠加', () => {
-  it('status → right dot, statusBar → left bar (bound default), both visible', () => {
+  it('status → right dot decoration, statusBar → border-left edge bar', () => {
     const { container } = render(<StatusRefChip descriptor={base} status="succeeded" statusColor="#4caf50" label="X" />)
-    expect(container.querySelectorAll('[data-ref-decorations="left"] [data-ref-decor="bar"]')).toHaveLength(1)
+    const chip = container.querySelector('button')!
+    expect(chip.style.borderLeftColor).toBe('rgb(76, 175, 80)')
     expect(container.querySelectorAll('[data-ref-decorations="right"] [data-ref-decor="dot"]')).toHaveLength(1)
     const dot = container.querySelector('[data-ref-decor="dot"]') as HTMLElement
     expect(dot.style.background).toBe('rgb(76, 175, 80)')
@@ -100,8 +102,8 @@ describe('StatusRefChip decorations 换算与叠加', () => {
     // right 由调用方全权：只有 icon；便捷 status 的点不再隐含叠加
     const right = [...container.querySelectorAll('[data-ref-decorations="right"] [data-ref-decor]')]
     expect(right.map((node) => node.getAttribute('data-ref-decor'))).toEqual(['icon-tint'])
-    // 左侧未提供 → 便捷换算仍生效（有点则条随点）
-    expect(container.querySelectorAll('[data-ref-decorations="left"] [data-ref-decor="bar"]')).toHaveLength(1)
+    // 左侧未提供 → 便捷换算仍生效（有点则边条随点）
+    expect(container.querySelector('button')!.style.borderLeftColor).toBe('rgb(76, 175, 80)')
   })
 
   it('decorations carry aria-hidden (pure visuals, invisible to AT)', () => {
@@ -130,22 +132,25 @@ describe('styles injection idempotency', () => {
   })
 })
 
-describe('outward ordering (色条恒在最外侧)', () => {
-  it('left side renders bar outermost regardless of array order', () => {
+describe('edge bars (色条=chip 边缘条，恒在最外侧)', () => {
+  it('left bar renders as the chip border-left (outermost, full height)', () => {
     const { container } = render(
       <ReferenceChip
         descriptor={base}
-        decorations={{ left: [{ kind: 'icon', src: SVG_ICON }, { kind: 'dot' }, { kind: 'bar', color: 'red' }] }}
+        decorations={{ left: [{ kind: 'bar', color: 'red' }, { kind: 'icon', src: SVG_ICON }, { kind: 'dot' }] }}
       >
         X
       </ReferenceChip>,
     )
-    const order = [...container.querySelectorAll('[data-ref-decorations="left"] [data-ref-decor]')]
-      .map((node) => node.getAttribute('data-ref-decor'))
-    expect(order).toEqual(['bar', 'icon-tint', 'dot'])
+    const chip = container.querySelector('button')!
+    expect(chip.style.borderLeftColor).toBe('red')
+    // bar 不占内联位；icon/dot 照常内联
+    expect(container.querySelectorAll('[data-ref-decor="icon-tint"]')).toHaveLength(1)
+    expect(container.querySelectorAll('[data-ref-decor="dot"]')).toHaveLength(1)
+    expect(container.querySelectorAll('[data-ref-decor="bar"]')).toHaveLength(0)
   })
 
-  it('right side mirrors: bar is the last element (outermost on the right)', () => {
+  it('right bar renders as the chip border-right', () => {
     const { container } = render(
       <ReferenceChip
         descriptor={base}
@@ -154,9 +159,9 @@ describe('outward ordering (色条恒在最外侧)', () => {
         X
       </ReferenceChip>,
     )
-    const order = [...container.querySelectorAll('[data-ref-decorations="right"] [data-ref-decor]')]
-      .map((node) => node.getAttribute('data-ref-decor'))
-    expect(order).toEqual(['dot', 'icon-tint', 'bar'])
+    const chip = container.querySelector('button')!
+    expect(chip.style.borderRightColor).toBe('red')
+    expect(container.querySelector('[data-ref-decor="dot"]')).not.toBeNull()
   })
 
   it('same-kind entries keep their original relative order', () => {

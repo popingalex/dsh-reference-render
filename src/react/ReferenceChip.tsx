@@ -10,7 +10,7 @@
 import type { MouseEvent, ReactNode } from 'react'
 import type { ReferenceActivation } from '../events'
 import type { ReferenceDescriptor } from '../descriptor'
-import { Decorations, type RefDecorationSides } from './decorations'
+import { Decorations, splitBars, type RefDecorationSides } from './decorations'
 
 export interface ReferenceChipActivateDetail {
   descriptor: ReferenceDescriptor
@@ -63,6 +63,12 @@ export function ReferenceChip({
   statusBarColor,
   decorations,
 }: ReferenceChipProps) {
+  // bar 装饰升级为 chip 边缘条（贴边、全高、恒在最外）；icon/dot 保持内联。
+  // 便捷 statusBarColor 与显式 left bar 同通道，显式优先。
+  const { leftBar, rightBar, rest } = splitBars(decorations)
+  const hasBorderOverride = leftBar !== undefined || rightBar !== undefined
+  const borderLeft = hasBorderOverride ? leftBar : statusBarColor
+  const borderRight = rightBar
   const text = children ?? displayText(descriptor)
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -83,11 +89,14 @@ export function ReferenceChip({
       onClick={handleClick}
       onMouseEnter={onHoverStart ? (event) => onHoverStart(descriptor, event.currentTarget) : undefined}
       onMouseLeave={onHoverEnd}
-      style={showStatusBar ? { borderLeftColor: statusBarColor } : undefined}
+      style={{
+        ...(borderLeft !== undefined ? { borderLeftColor: borderLeft } : {}),
+        ...(borderRight !== undefined ? { borderRightColor: borderRight } : {}),
+      }}
     >
-      <Decorations decorations={decorations} side="left" />
+      <Decorations decorations={rest} side="left" />
       {text}
-      <Decorations decorations={decorations} side="right" />
+      <Decorations decorations={rest} side="right" />
     </button>
   )
 }

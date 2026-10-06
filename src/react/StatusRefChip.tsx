@@ -68,18 +68,14 @@ export function StatusRefChip({
   // 状态点：仅当宿主给出业务状态时显示——解析失败/服务不可达不标状态点
   const showStatusDot = status !== undefined && status !== ''
   const color = statusColor ?? (status !== undefined ? STATUS_REF_STATUS_COLORS[status] ?? STATUS_REF_STATUS_COLORS.none : undefined)
-  // 便捷字段换算为缺省装饰位：状态条→左、状态点→右。
-  // 显式 decorations 提供了某一侧时，该侧全权归调用方（便捷字段不再隐含叠加），
-  // 避免"隐含装饰挤占显式配额"的截断意外；未提供的侧仍享受便捷换算。
+  // 便捷字段换算：状态点→右侧点装饰；状态条→borderLeft（贴边条，渲染方统一）。
+  // 显式 decorations 提供了某一侧时，该侧全权归调用方（便捷字段不再隐含叠加）。
   const barColor = statusBar === undefined ? (showStatusDot ? color : undefined) : (statusBar === null ? undefined : statusBar)
   const merged: import('./decorations').RefDecorationSides = {
-    left: decorations?.left ?? (
-      statusBar !== null && barColor !== undefined
-        ? [{ kind: 'bar', color: barColor } as import('./decorations').RefDecoration]
-        : []),
+    left: decorations?.left,
     right: decorations?.right ?? (
       showStatusDot && color !== undefined
-        ? [{ kind: 'dot', color } as import('./decorations').RefDecoration]
+        ? [{ kind: 'dot', color }]
         : []),
   }
   return (
@@ -91,7 +87,7 @@ export function StatusRefChip({
       disabled={disabled}
       // 左状态条（border 视觉）：缺省随状态点；statusBar 显式覆盖时点与条正交
       statusBarColor={barColor}
-      decorations={merged}
+      decorations={merged.left === undefined && merged.right === undefined ? undefined : merged}
     >
       {showKind ? <span data-ref-chip-kind="">{typeLabel}</span> : null}
       <span data-ref-chip-label="">{children ?? labelText}</span>

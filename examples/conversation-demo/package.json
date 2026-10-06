@@ -1,6 +1,6 @@
 {
   "name": "dsh-reference-render-demo",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Demo conversation integration for dsh-reference-render: renders wire references as chips in the real DSH conversation with hover previews and demo-domain sidebar claims. Demo/acceptance material \u2014 not for production use.",
   "license": "MIT",
   "repository": {

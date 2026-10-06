@@ -19,8 +19,13 @@ export type RefIconSource = string
 
 export type RefDecoration =
   | { kind: 'dot'; color?: string | undefined; size?: number | undefined }
-  | { kind: 'bar'; color?: string | undefined; size?: number | undefined }
   | { kind: 'icon'; src: RefIconSource; color?: string | undefined; mode?: 'tint' | 'image' | undefined; size?: number | undefined }
+  /**
+   * @deprecated 兼容输入：bar 在渲染期被 splitBars 抽为 chip 边缘条
+   * （border-left/right），恒在最外侧。新代码请改用 side 级
+   * `decorations.left/right` 的 bar 语义——即仍用本形状，渲染方负责贴边。
+   */
+  | { kind: 'bar'; color?: string | undefined; size?: number | undefined }
 
 export interface RefDecorationSides {
   left?: RefDecoration[] | undefined
@@ -35,6 +40,7 @@ function safeSrc(src: string): string | undefined {
 }
 
 function DecorationNode({ decoration }: { decoration: RefDecoration }): ReactNode {
+  if (decoration.kind === 'bar') return null
   if (decoration.kind === 'dot') {
     const size = decoration.size ?? 6
     return createElement('span', {
@@ -44,20 +50,6 @@ function DecorationNode({ decoration }: { decoration: RefDecoration }): ReactNod
         width: size,
         height: size,
         borderRadius: 999,
-        background: decoration.color ?? 'currentColor',
-        flex: 'none',
-      },
-    })
-  }
-  if (decoration.kind === 'bar') {
-    const width = decoration.size ?? 3
-    return createElement('span', {
-      'data-ref-decor': 'bar',
-      style: {
-        display: 'inline-block',
-        width,
-        height: width * 4 + 2,
-        borderRadius: 2,
         background: decoration.color ?? 'currentColor',
         flex: 'none',
       },
@@ -98,8 +90,41 @@ function DecorationNode({ decoration }: { decoration: RefDecoration }): ReactNod
 
 const PER_SIDE_MAX = 3
 
-/** 外侧优先序：bar 恒在最外（紧贴 chip 边缘），dot 最靠内容；同类型保持原序。 */
-const OUTWARD_ORDER: Record<RefDecoration['kind'], number> = { bar: 0, icon: 1, dot: 2 }
+export interface BarSplits {
+  /** 左侧边缘条颜色（渲染为 chip 的 border-left）。 */
+  leftBar?: string | undefined
+  /** 右侧边缘条颜色（渲染为 chip 的 border-right）。 */
+  rightBar?: string | undefined
+  /** 去掉 bar 后的剩余内联装饰（icon/dot），仍分侧。 */
+  rest: RefDecorationSides
+}
+
+/**
+ * 把 decorations 里的 bar 抽为 chip 边缘条颜色（border-left/right），其余
+ * 装饰（icon/dot）保持内联。视觉裁决：色条恒在最外侧——贴 chip 边缘、全高，
+ * 与便捷 statusBar 的 border 视觉完全一致（两种'色条'一种实现）。
+ * 每侧最多取一个 bar（契约：每类一个）。
+ */
+export function splitBars(sides: RefDecorationSides | undefined): BarSplits {
+  // 入参宽化：历史调用方可能仍传 bar 形状（运行时过滤掉，渲染为边缘条）
+  const pick = (side: 'left' | 'right'): string | undefined => {
+    const bar = (sides?.[side] ?? []).find((decoration) => decoration.kind === 'bar')
+    return bar === undefined ? undefined : bar.color ?? 'currentColor'
+  }
+  const inlineOf = (side: 'left' | 'right'): RefDecoration[] =>
+    (sides?.[side] ?? []).filter((decoration) => decoration.kind !== 'bar')
+  return {
+    leftBar: pick('left'),
+    rightBar: pick('right'),
+    rest: {
+      left: inlineOf('left'),
+      right: inlineOf('right'),
+    },
+  }
+}
+
+/** dot 最靠内容、icon 居中；bar 已抽为 chip 边缘条（恒最外），不参与排序。 */
+const OUTWARD_ORDER: Record<'dot' | 'icon', number> = { icon: 0, dot: 1 }
 
 function clamp(list: RefDecoration[] | undefined): RefDecoration[] {
   if (list === undefined || list.length === 0) return []
@@ -107,12 +132,12 @@ function clamp(list: RefDecoration[] | undefined): RefDecoration[] {
 }
 
 /**
- * 视觉排序（用户裁决：色条恒在最外侧）：
- * left 侧渲染序 = [bar, icon, dot, ...原序同类型]；right 侧镜像（bar 最靠右）。
- * 数组顺序不影响视觉位置。
+ * 视觉排序：dot 最靠内容、icon 居中（bar 已抽为 chip 边缘条，恒在最外——
+ * 视觉位置由渲染方固定，数组顺序不影响位置）。同类型保持原序。
  */
 function ordered(list: RefDecoration[], side: 'left' | 'right'): RefDecoration[] {
-  const withIndex = list.map((decoration, index) => ({ decoration, index }))
+  const inline = list.filter((decoration) => decoration.kind !== 'bar')
+  const withIndex = inline.map((decoration, index) => ({ decoration, index }))
   const sorted = withIndex.sort((a, b) => {
     const byKind = OUTWARD_ORDER[a.decoration.kind] - OUTWARD_ORDER[b.decoration.kind]
     return byKind !== 0 ? byKind : a.index - b.index
