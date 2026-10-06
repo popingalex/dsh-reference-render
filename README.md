@@ -11,11 +11,17 @@ Domain-neutral **structured reference rendering** for [DeepSeek Harness (DSH)](h
 
 ## Install
 
+npm registry publication is pending; install from this repository in the meantime:
+
 ```bash
-dsh plugin --profile web add dsh-reference-render@0.1.0
+git clone https://github.com/popingalex/dsh-reference-render.git
+cd dsh-reference-render && pnpm install && pnpm build && npm pack
+dsh plugin --profile web add ./dsh-reference-render-0.1.0.tgz
 ```
 
-Tested on DSH 0.2.1-alpha.1 only — see [COMPATIBILITY.md](./COMPATIBILITY.md) and [docs/install.md](./docs/install.md) (demo bundles, git install, troubleshooting).
+Once published: `dsh plugin --profile web add dsh-reference-render@0.1.0`.
+
+Tested on DSH 0.2.1-alpha.1 only — see [COMPATIBILITY.md](./COMPATIBILITY.md) and [docs/install.md](./docs/install.md) (demo bundles, troubleshooting).
 
 ## Usage
 

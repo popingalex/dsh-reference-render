@@ -53,11 +53,19 @@ jobs:
       - run: pnpm sanitize:release
 
       - name: Publish the packed tarball
+        # Skipped (not failed) until the repo secret NPM_TOKEN exists — npm
+        # registration is an independent step the maintainer completes later.
+        if: ${{ secrets.NPM_TOKEN != '' }}
         run: |
           tarball="$(npm pack --ignore-scripts | tail -1)"
           npm publish "$tarball" --access public --provenance --ignore-scripts
         env:
-          # npm auth: add the repo secret NPM_TOKEN (an npm automation/granular
-          # token with publish rights to this package). Provenance additionally
-          # requires OIDC, which setup-node grants when id-token: write is set.
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Record npm publication status
+        run: |
+          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "npm publication skipped: NPM_TOKEN secret not configured yet (GitHub Release itself is live)"
+          else
+            echo "npm publication ran"
+          fi

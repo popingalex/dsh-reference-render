@@ -11,11 +11,17 @@
 
 ## 安装
 
+npm registry 上架待办；先从本仓库安装：
+
 ```bash
-dsh plugin --profile web add dsh-reference-render@0.1.0
+git clone https://github.com/popingalex/dsh-reference-render.git
+cd dsh-reference-render && pnpm install && pnpm build && npm pack
+dsh plugin --profile web add ./dsh-reference-render-0.1.0.tgz
 ```
 
-仅在 DSH 0.2.1-alpha.1 上测试——见 [COMPATIBILITY.md](./COMPATIBILITY.md) 与 [docs/install.md](./docs/install.md)（示例 bundle、git 安装、故障排查）。
+上架后：`dsh plugin --profile web add dsh-reference-render@0.1.0`。
+
+仅在 DSH 0.2.1-alpha.1 上测试——见 [COMPATIBILITY.md](./COMPATIBILITY.md) 与 [docs/install.md](./docs/install.md)（示例 bundle、故障排查）。
 
 ## 使用
 
