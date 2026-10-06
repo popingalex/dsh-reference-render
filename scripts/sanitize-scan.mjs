@@ -70,10 +70,10 @@ if (existsSync(localRulesPath)) {
 
 const releaseMode = process.argv.includes('--release')
 if (releaseMode && releaseRules.length === 0) {
-  console.error('--release needs host-specific rules: add the personal-identity patterns to scripts/private-rules.local.json with "releaseOnly": true')
-  process.exit(1)
+  // 公开仓 CI 没有（也不该有）不入库的私名规则文件——releaseOnly 规则是发布者
+  // 本机可选的额外加固，缺失时降级为提示而非死锁（公共规则照常 fail-closed）。
+  console.warn('sanitize: no releaseOnly rules loaded (scripts/private-rules.local.json absent on this machine) — running with built-in rules only')
 }
-const activeRules = releaseMode ? [...RULES, ...releaseRules] : RULES
 
 /**
  * Files whose job is to name what must not ship. A rule that forbids a filename
