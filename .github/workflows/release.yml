@@ -56,3 +56,8 @@ jobs:
         run: |
           tarball="$(npm pack --ignore-scripts | tail -1)"
           npm publish "$tarball" --access public --provenance --ignore-scripts
+        env:
+          # npm auth: add the repo secret NPM_TOKEN (an npm automation/granular
+          # token with publish rights to this package). Provenance additionally
+          # requires OIDC, which setup-node grants when id-token: write is set.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
