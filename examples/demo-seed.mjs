@@ -13,7 +13,7 @@
  * 前提：profile 已由 `dsh --profile <name> --from-default-profile web` 初始化。
  */
 import { randomUUID } from 'node:crypto'
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, rmSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 
@@ -75,6 +75,15 @@ function zstdMultiFrame(frames, outPath) {
 
 function seedSession({ home, cwd, userText, demoText, title }) {
   const slug = projectKey(cwd)
+  // 幂等：先清该工作区下旧演示会话（保留非 session- 实体），重复运行不堆积
+  const projectDir = path.join(home, 'sessions', slug)
+  if (existsSync(projectDir)) {
+    for (const entry of readdirSync(projectDir, { withFileTypes: true })) {
+      if (entry.isDirectory() && entry.name.startsWith('session-')) {
+        rmSync(path.join(projectDir, entry.name), { recursive: true, force: true })
+      }
+    }
+  }
   const sid = 'session-' + randomUUID()
   const now = Date.now()
   let seq = 0
