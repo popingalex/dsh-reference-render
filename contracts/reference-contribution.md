@@ -78,3 +78,7 @@ type RefDecoration =
 ```
 
 icon 安全面：`src` 一律经 `<img>`/CSS mask 加载（SVG 不执行脚本）；`javascript:` 与非 `data:image` 一律拒绝渲染。
+
+### 视觉位置裁决（渲染方固定）
+
+装饰的**视觉位置由渲染方固定，贡献方数组顺序不改变视觉位置**：`bar` 恒在最外侧（紧贴 chip 边缘），`icon` 居中，`dot` 最靠内容——left 侧渲染序 `[bar, icon, dot]`，right 侧镜像 `[dot, icon, bar]`。贡献方只需声明"有哪些装饰"，无需（也无法）通过数组顺序控制位置。同类型多个装饰保持数组原序。
