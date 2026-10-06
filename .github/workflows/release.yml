@@ -63,8 +63,10 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Record npm publication status
+        env:
+          HAS_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
         run: |
-          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
+          if [ "$HAS_TOKEN" != "true" ]; then
             echo "npm publication skipped: NPM_TOKEN secret not configured yet (GitHub Release itself is live)"
           else
             echo "npm publication ran"
