@@ -74,6 +74,7 @@ if (releaseMode && releaseRules.length === 0) {
   // 本机可选的额外加固，缺失时降级为提示而非死锁（公共规则照常 fail-closed）。
   console.warn('sanitize: no releaseOnly rules loaded (scripts/private-rules.local.json absent on this machine) — running with built-in rules only')
 }
+const activeRules = [...RULES, ...releaseRules]
 
 /**
  * Files whose job is to name what must not ship. A rule that forbids a filename
