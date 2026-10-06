@@ -98,9 +98,27 @@ function DecorationNode({ decoration }: { decoration: RefDecoration }): ReactNod
 
 const PER_SIDE_MAX = 3
 
+/** 外侧优先序：bar 恒在最外（紧贴 chip 边缘），dot 最靠内容；同类型保持原序。 */
+const OUTWARD_ORDER: Record<RefDecoration['kind'], number> = { bar: 0, icon: 1, dot: 2 }
+
 function clamp(list: RefDecoration[] | undefined): RefDecoration[] {
   if (list === undefined || list.length === 0) return []
   return list.slice(0, PER_SIDE_MAX)
+}
+
+/**
+ * 视觉排序（用户裁决：色条恒在最外侧）：
+ * left 侧渲染序 = [bar, icon, dot, ...原序同类型]；right 侧镜像（bar 最靠右）。
+ * 数组顺序不影响视觉位置。
+ */
+function ordered(list: RefDecoration[], side: 'left' | 'right'): RefDecoration[] {
+  const withIndex = list.map((decoration, index) => ({ decoration, index }))
+  const sorted = withIndex.sort((a, b) => {
+    const byKind = OUTWARD_ORDER[a.decoration.kind] - OUTWARD_ORDER[b.decoration.kind]
+    return byKind !== 0 ? byKind : a.index - b.index
+  })
+  const orderedList = sorted.map((entry) => entry.decoration)
+  return side === 'right' ? orderedList.reverse() : orderedList
 }
 
 /** 渲染一组装饰（side 决定 gap 方向语义由外层 flex 处理）。 */
@@ -108,7 +126,7 @@ export function Decorations({
   decorations,
   side,
 }: { decorations: RefDecorationSides | undefined; side: 'left' | 'right' }): ReactNode {
-  const list = clamp(decorations?.[side])
+  const list = ordered(clamp(decorations?.[side]), side)
   if (list.length === 0) return null
   return createElement(
     'span',

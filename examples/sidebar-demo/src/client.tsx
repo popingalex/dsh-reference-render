@@ -47,9 +47,9 @@ export const DEMO_DOMAINS: Record<string, DemoDomainEntry> = {
   'service/SRV-1': { kind: 'service', id: 'SRV-1', typeLabel: '服务', summary: '服务 SRV-1 在线，探针 3/3 通过。', status: 'live', statusColor: '#64b5f6', statusBar: 'bind', workspaceBound: false },
   // 图标装饰三例：SVG tint（color 缺省跟随系统文本）/ 原色图片 / 六位全满
   'knowledge/KN-ICON': { kind: 'knowledge', id: 'KN-ICON', typeLabel: '知识', summary: '知识卡片 KN-ICON：SVG 图标 tint 模式，未设色=跟随系统文本色。', statusBar: '#64b5f6', workspaceBound: true,
-    decorations: { left: [{ kind: 'icon', src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1l2.1 4.9L15 7l-4 3.4L12.2 15 8 12.3 3.8 15 5 10.4 1 7l4.9-1.1z'/%3E%3C/svg%3E" }] } },
+    decorations: { left: [{ kind: 'icon', src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1l2.1 4.9L15 7l-4 3.4L12.2 15 8 12.3 3.8 15 5 10.4 1 7l4.9-1.1z'/%3E%3C/svg%3E" }, { kind: 'bar', color: '#64b5f6' }] } },
   'asset/PIC-1': { kind: 'asset', id: 'PIC-1', typeLabel: '素材', summary: '素材 PIC-1：彩色图片图标（image 模式，原色渲染）。', status: 'ready', statusColor: '#4caf50', workspaceBound: true,
-    decorations: { right: [{ kind: 'icon', src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', mode: 'image', size: 10 }] } },
+    decorations: { right: [{ kind: 'dot', color: '#4caf50' }, { kind: 'icon', src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='1' y='2' width='14' height='11' rx='2' fill='%234dabf7'/%3E%3Ccircle cx='5.5' cy='6' r='1.6' fill='%23ffd43b'/%3E%3Cpath d='M2 11l3.5-3.5 2.5 2.5 3-3 3 4z' fill='%2374c0fc'/%3E%3C/svg%3E", mode: 'image', size: 12 }] } },
   'plan/PLAN-9': { kind: 'plan', id: 'PLAN-9', typeLabel: '计划', summary: '计划 PLAN-9：前后各 3 个装饰（2×3 六位全满）。', status: 'active', statusColor: '#ffb74d', statusBar: null, workspaceBound: true,
     decorations: {
       left: [{ kind: 'icon', src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='2' y='2' width='12' height='12' rx='2'/%3E%3C/svg%3E" }, { kind: 'bar', color: '#64b5f6' }, { kind: 'dot', color: '#4caf50' }],

@@ -1,6 +1,6 @@
 {
   "name": "dsh-reference-render-sidebar-demo",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Demo content-contributor plugin for dsh-reference-render: resource sidebar tab (frame-stream provider + useResource body), hover preview contribution, and reference/open takeover. Acceptance/demo material.",
   "license": "MIT",
   "repository": {

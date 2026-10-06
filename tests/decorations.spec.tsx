@@ -129,3 +129,46 @@ describe('styles injection idempotency', () => {
     expect(style?.textContent).toContain('.dsh-ref-chip')
   })
 })
+
+describe('outward ordering (色条恒在最外侧)', () => {
+  it('left side renders bar outermost regardless of array order', () => {
+    const { container } = render(
+      <ReferenceChip
+        descriptor={base}
+        decorations={{ left: [{ kind: 'icon', src: SVG_ICON }, { kind: 'dot' }, { kind: 'bar', color: 'red' }] }}
+      >
+        X
+      </ReferenceChip>,
+    )
+    const order = [...container.querySelectorAll('[data-ref-decorations="left"] [data-ref-decor]')]
+      .map((node) => node.getAttribute('data-ref-decor'))
+    expect(order).toEqual(['bar', 'icon-tint', 'dot'])
+  })
+
+  it('right side mirrors: bar is the last element (outermost on the right)', () => {
+    const { container } = render(
+      <ReferenceChip
+        descriptor={base}
+        decorations={{ right: [{ kind: 'icon', src: SVG_ICON }, { kind: 'dot' }, { kind: 'bar', color: 'red' }] }}
+      >
+        X
+      </ReferenceChip>,
+    )
+    const order = [...container.querySelectorAll('[data-ref-decorations="right"] [data-ref-decor]')]
+      .map((node) => node.getAttribute('data-ref-decor'))
+    expect(order).toEqual(['dot', 'icon-tint', 'bar'])
+  })
+
+  it('same-kind entries keep their original relative order', () => {
+    const { container } = render(
+      <ReferenceChip
+        descriptor={base}
+        decorations={{ left: [{ kind: 'dot', color: 'red' }, { kind: 'dot', color: 'blue' }] }}
+      >
+        X
+      </ReferenceChip>,
+    )
+    const dots = [...container.querySelectorAll('[data-ref-decor="dot"]')]
+    expect(dots.map((node) => (node as HTMLElement).style.background)).toEqual(['red', 'blue'])
+  })
+})
