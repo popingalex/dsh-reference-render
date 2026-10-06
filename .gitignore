@@ -7,3 +7,4 @@ scripts/private-rules.local.json
 *.log
 .DS_Store
 **/goals/
+.npmrc
