@@ -169,9 +169,24 @@ const DEMO_TAB_ID = 'dsh-reference-render-sidebar-demo/resource-object'
 /* ============================== apply ============================== */
 
 /** cordis 服务注入声明：缺一访问即 throw（client runner 严格访问面）。 */
-export const inject = ['slots', 'sidebarRight', 'resources', 'sidebarRightTabs']
+// sidebarRightTabs 在 EH 客户端装载链无模块映射（unmapped inject 会使 activation 整体失败）——
+// 改为可选消费：经 ctx 侧 optional 访问，不再作为硬性 inject 依赖。
+export const inject = ['slots', 'sidebarRight', 'resources']
 
 export function apply(ctx: Record<string, unknown> & {
+  effect?: (fn: () => unknown, label?: string) => unknown
+}): void {
+  try {
+    applyInner(ctx)
+  } catch (e) {
+    const msg = e instanceof Error ? `${e.message} @ ${String(e.stack).slice(0, 260)}` : String(e)
+    ;(globalThis as Record<string, unknown>).__sdErr = msg
+    try { document.title = `SDERR:${msg.slice(0, 150)}` } catch { /* 无 DOM 时忽略 */ }
+    throw e
+  }
+}
+
+function applyInner(ctx: Record<string, unknown> & {
   effect?: (fn: () => unknown, label?: string) => unknown
 }): void {
   const slots = ctx.slots as {
